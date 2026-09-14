@@ -20,19 +20,10 @@ RUN rm -rf /usr/local/lib/node_modules/corepack \
             /root/.cache/node/corepack && \
     rm -f /usr/local/bin/corepack /usr/local/bin/yarn /usr/local/bin/yarnpkg
 
-FROM --platform=${BUILDPLATFORM} golang:1.26 AS migrate-builder
-ARG TARGETOS
-ARG TARGETARCH
-ENV CGO_ENABLED=0 \
-    GOBIN=/out \
-    GOOS=${TARGETOS} \
-    GOARCH=${TARGETARCH}
-# Build only the ClickHouse migrate CLI Langfuse uses at runtime.
-# compile this ourselves instead of downloading the upstream release
-# because prebuilt bins bundle many unused drivers and thus inherit CVEs
-# eg.: https://github.com/golang-migrate/migrate/issues/1357
-RUN /usr/local/go/bin/go install -trimpath -tags 'clickhouse' -ldflags='-s -w' \
-    github.com/golang-migrate/migrate/v4/cmd/migrate@v4.19.1
+# eval_puls: reuse the migrate CLI (golang-migrate v4.19.1, clickhouse build)
+# straight from the official release image instead of compiling it here —
+# removes the golang base image and its cross-border module fetch entirely.
+FROM --platform=${TARGETPLATFORM:-linux/amd64} langfuse/langfuse:3 AS migrate-source
 
 FROM --platform=${TARGETPLATFORM:-linux/amd64} build-base AS pruner
 
@@ -45,12 +36,28 @@ FROM --platform=${TARGETPLATFORM:-linux/amd64} build-base AS builder
 
 WORKDIR /app
 
+# eval_puls: npm registry override (e.g. --build-arg NPM_REGISTRY=https://registry.npmmirror.com
+# for builds behind the GFW) and Go module proxy for the migrate builder.
+ARG NPM_REGISTRY=https://registry.npmjs.org
+ARG GO_PROXY=https://proxy.golang.org
+
 # First install the dependencies (as they change less often)
 COPY --from=pruner /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 COPY --from=pruner /app/out/pnpm-workspace.yaml ./pnpm-workspace.yaml
 COPY --from=pruner /app/out/json/ .
 
-RUN pnpm install --frozen-lockfile
+# eval_puls: persistent pnpm store cache mount survives failed/retried builds;
+# generous fetch timeout/retries because cross-border registries can stall.
+# Prisma engines / sentry-cli postinstalls download binaries from their own
+# CDNs — point them at China mirrors so they don't stall without a proxy.
+RUN --mount=type=cache,target=/pnpm/store \
+    pnpm config set registry ${NPM_REGISTRY} && \
+    PRISMA_ENGINES_MIRROR=https://registry.npmmirror.com/-/binary/prisma \
+    SENTRYCLI_CDNURL=https://registry.npmmirror.com/-/binary/sentry-cli \
+    pnpm install --frozen-lockfile \
+      --store-dir /pnpm/store \
+      --fetch-timeout 300000 \
+      --fetch-retries 5
 
 # pnpm 11 defaults verify-deps-before-run to "install", so every `pnpm run`
 # spawned by turbo re-checks node_modules via file mtimes. Cached install
@@ -150,7 +157,10 @@ ARG GID=1001
 RUN addgroup --system --gid ${GID} nodejs
 RUN adduser --system --uid ${UID} nextjs
 
-RUN npm install -g --no-package-lock --no-save prisma@6.19.3
+# eval_puls: npm registry override for the runtime global installs below.
+ARG NPM_REGISTRY=https://registry.npmjs.org
+RUN npm config set registry ${NPM_REGISTRY} && \
+    npm install -g --no-package-lock --no-save prisma@6.19.3
 
 # Install dd-trace only if NEXT_PUBLIC_LANGFUSE_CLOUD_REGION is configured
 ARG NEXT_PUBLIC_LANGFUSE_CLOUD_REGION
@@ -162,7 +172,7 @@ RUN if [ -n "$NEXT_PUBLIC_LANGFUSE_CLOUD_REGION" ]; then \
 RUN rm -rf /usr/local/lib/node_modules/npm && \
     rm -f /usr/local/bin/npm /usr/local/bin/npx
 
-COPY --from=migrate-builder /out/migrate /usr/bin/migrate
+COPY --from=migrate-source /usr/bin/migrate /usr/bin/migrate
 
 COPY --from=builder --chown=nextjs:nodejs /app/web/next.config.mjs .
 COPY --from=builder --chown=nextjs:nodejs /app/web/package.json .

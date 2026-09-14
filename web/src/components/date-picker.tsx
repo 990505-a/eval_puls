@@ -27,6 +27,7 @@ import {
   type TimeRange,
 } from "@/src/utils/date-range-utils";
 import { combineDateAndTime } from "@/src/components/ui/time-picker-utils";
+import { dateFnsOptions } from "@/src/i18n/date-locale";
 
 export function DatePicker({
   date,
@@ -58,7 +59,7 @@ export function DatePicker({
           >
             <CalendarIcon className="mr-2 h-4 w-4" />
             {date ? (
-              format(date, includeTimePicker ? "PPP pp" : "PPP")
+              format(date, includeTimePicker ? "PPP pp" : "PPP", dateFnsOptions())
             ) : (
               <span>Pick a date</span>
             )}
@@ -239,11 +240,11 @@ export function DatePickerWithRange({
             {internalDateRange?.from ? (
               internalDateRange.to ? (
                 <>
-                  {format(internalDateRange.from, "LLL dd, yy : HH:mm")} -{" "}
-                  {format(internalDateRange.to, "LLL dd, yy : HH:mm")}
+                  {format(internalDateRange.from, "LLL dd, yy : HH:mm", dateFnsOptions())} -{" "}
+                  {format(internalDateRange.to, "LLL dd, yy : HH:mm", dateFnsOptions())}
                 </>
               ) : (
-                format(internalDateRange.from, "LLL dd, y")
+                format(internalDateRange.from, "LLL dd, y", dateFnsOptions())
               )
             ) : (
               <span>Pick a date</span>

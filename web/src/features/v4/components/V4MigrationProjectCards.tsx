@@ -35,6 +35,7 @@ import {
 } from "@/src/features/v4/utils";
 import { compactNumberFormatter, numberFormatter } from "@/src/utils/numbers";
 import { cn } from "@/src/utils/tailwind";
+import { dateFnsOptions } from "@/src/i18n/date-locale";
 
 export type V4LegacyIntegrations = {
   posthog: boolean;
@@ -179,7 +180,9 @@ const getBucketTimes = (rows: Array<{ time: string }>): string[] =>
 
 const getBucketLabel = (time: string) => {
   const date = new Date(time);
-  return Number.isNaN(date.getTime()) ? time : format(date, "MMM d, HH:mm");
+  return Number.isNaN(date.getTime())
+    ? time
+    : format(date, "MMM d, HH:mm", dateFnsOptions());
 };
 
 const groupUsageSeries = <T extends { time: string; count: number }>({

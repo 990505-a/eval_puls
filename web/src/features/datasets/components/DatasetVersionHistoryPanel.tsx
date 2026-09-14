@@ -26,6 +26,7 @@ import {
 } from "date-fns";
 import { cn } from "@/src/utils/tailwind";
 import { showSuccessToast } from "@/src/features/notifications/showSuccessToast";
+import { dateFnsOptions } from "@/src/i18n/date-locale";
 
 type DatasetVersionHistoryPanelProps = {
   projectId: string;
@@ -130,7 +131,11 @@ export function DatasetVersionHistoryPanel({
       (iv) => iv.getTime() === version.getTime(),
     );
 
-    const dateLabel = format(version, "MMM d, yyyy 'at' h:mm a");
+    const dateLabel = format(
+      version,
+      "MMM d, yyyy 'at' h:mm a",
+      dateFnsOptions(),
+    );
 
     return (
       <div

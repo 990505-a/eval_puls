@@ -189,6 +189,7 @@ export function TableViewPresetsDrawer({
   systemFilterPresets,
   triggerId,
 }: TableViewPresetsDrawerProps) {
+  const { t } = useI18n();
   const [searchQuery, setSearchQueryLocal] = useState("");
   const { tableName, projectId, controllers } = viewConfig;
   const { handleSetViewId, applyViewState, selectedViewId, appliedViewId } =
@@ -203,7 +204,6 @@ export function TableViewPresetsDrawer({
   } = useViewMutations({ handleSetViewId, applyViewState });
   const utils = api.useUtils();
   const capture = usePostHogClientCapture();
-  const { t } = useI18n();
 
   const form = useForm({
     resolver: zodResolver(z.object({ name: z.string().min(1) })),

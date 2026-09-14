@@ -1,6 +1,7 @@
 import { Info } from "lucide-react";
 import { format } from "date-fns";
 import { Button } from "@/src/components/ui/button";
+import { dateFnsOptions } from "@/src/i18n/date-locale";
 
 type DatasetVersionWarningBannerProps = {
   selectedVersion: Date;
@@ -33,7 +34,7 @@ export function DatasetVersionWarningBanner({
           <p className="text-muted-foreground text-sm wrap-break-word">
             Viewing version from{" "}
             <span className="text-foreground font-bold">
-              {format(selectedVersion, "MMM d, yyyy 'at' h:mm a")}
+              {format(selectedVersion, "MMM d, yyyy 'at' h:mm a", dateFnsOptions())}
             </span>
           </p>
           <Button

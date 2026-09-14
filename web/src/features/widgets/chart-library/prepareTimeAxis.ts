@@ -15,6 +15,7 @@
  */
 
 import { getEvenTickInterval } from "@/src/features/widgets/chart-library/utils";
+import { currentDateLocaleTag } from "@/src/i18n/date-locale";
 
 const MINUTE = 60_000;
 const HOUR = 60 * MINUTE;
@@ -286,22 +287,24 @@ export function prepareTimeAxis(
   const subHour = bucketMs > 0 && bucketMs < HOUR;
   const subDay = bucketMs > 0 && bucketMs < DAY;
 
+  const dateLocaleTag = currentDateLocaleTag();
+
   const formatTick = (raw: unknown): string => {
     const date = parseChartTimestamp(raw);
     if (!date) return typeof raw === "string" ? raw : "";
     if (mode === "time") {
-      return date.toLocaleTimeString("en-US", {
+      return date.toLocaleTimeString(dateLocaleTag, {
         hour: "numeric",
         ...(subHour ? { minute: "2-digit" } : {}),
       });
     }
     if (mode === "month") {
-      return date.toLocaleDateString("en-US", {
+      return date.toLocaleDateString(dateLocaleTag, {
         month: "short",
         year: "numeric",
       });
     }
-    return date.toLocaleDateString("en-US", {
+    return date.toLocaleDateString(dateLocaleTag, {
       month: "short",
       day: "numeric",
       ...(crossesYear ? { year: "numeric" } : {}),
@@ -315,7 +318,7 @@ export function prepareTimeAxis(
   const formatTooltip = (raw: unknown): string => {
     const date = parseChartTimestamp(raw);
     if (!date) return typeof raw === "string" ? raw : "";
-    return date.toLocaleString("en-US", {
+    return date.toLocaleString(dateLocaleTag, {
       month: "short",
       day: "numeric",
       year: "numeric",

@@ -17,6 +17,7 @@ import { DataTable } from "@/src/components/table/data-table";
 import { DataTableToolbar } from "@/src/components/table/data-table-toolbar";
 import { type LangfuseColumnDef } from "@/src/components/table/types";
 import { usdFormatter } from "@/src/utils/numbers";
+import { dateFnsOptions } from "@/src/i18n/date-locale";
 
 interface SpendAlertsTableProps {
   orgId: string;
@@ -103,9 +104,10 @@ export function SpendAlertsTable({ orgId }: SpendAlertsTableProps) {
       size: 160,
       cell: ({ row }) =>
         row.original.triggeredAt
-          ? formatDistanceToNow(new Date(row.original.triggeredAt), {
-              addSuffix: true,
-            })
+          ? formatDistanceToNow(
+              new Date(row.original.triggeredAt),
+              dateFnsOptions({ addSuffix: true }),
+            )
           : "Never",
     },
     {

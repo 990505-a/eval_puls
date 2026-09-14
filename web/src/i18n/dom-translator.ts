@@ -62,12 +62,37 @@ function lookup(text: string): string | undefined {
   return undefined;
 }
 
+// 少数文案由模板字符串拼出来（工具函数里没有 i18n 上下文），整串匹配够不着。
+// 这些格式固定、只夹带数字/名称，用逐条正则替换，比给每个 util 传 locale 更省事。
+const REWRITES: Array<[RegExp, string]> = [
+  // "2,542 prompt → 193 completion (∑ 2,735)"（token 用量徽标）
+  [/([\d,.]+)\s+prompt\s+→\s+([\d,.]+)\s+completion\s+\(∑\s*([\d,.]+)\)/g, "$1 输入 → $2 输出 (∑ $3)"],
+  // 批量动作状态弹窗
+  [/^Adding (\d+) observations to (.+)$/, "正在向 $2 添加 $1 条观测记录"],
+  [/^(\d+) observations have been added to (.+)$/, "已向 $2 添加 $1 条观测记录"],
+  [/^(\d+) observations added, (\d+) failed$/, "已添加 $1 条观测记录，$2 条失败"],
+  // 评分分析卡片描述
+  [
+    /^([\d,]+) observations \| Most frequent: (.+) \(([\d,]+)\)$/,
+    "$1 条观测记录 | 最常见：$2（$3）",
+  ],
+  [/^([\d,]+) observations$/, "$1 条观测记录"],
+  // 助手消息里的评论徽标
+  [/^Comment: (.+)$/, "评论：$1"],
+];
+
+function applyRewrites(text: string): string | undefined {
+  let out = text;
+  for (const [pattern, replacement] of REWRITES) out = out.replace(pattern, replacement);
+  return out === text ? undefined : out;
+}
+
 function translateTextNode(node: Text): void {
   const raw = node.nodeValue;
   if (!raw) return;
   const trimmed = raw.trim();
   if (!trimmed) return;
-  const hit = lookup(trimmed);
+  const hit = lookup(trimmed) ?? applyRewrites(trimmed);
   if (hit === undefined) return;
   // 保留原有首尾空白，避免影响内联排版
   node.nodeValue = raw.replace(trimmed, hit);

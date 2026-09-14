@@ -80,6 +80,7 @@ import { useClipboardWidgetProbe } from "@/src/features/widgets/hooks/useClipboa
 import { extractTransferFiles } from "@/src/components/editor/fileDropPaste";
 import { Layer } from "@/src/components/ui/layer";
 import { showSuccessToast } from "@/src/features/notifications/showSuccessToast";
+import { useI18n } from "@/src/i18n/provider";
 
 // Position for a tile inserted "next to" an anchor tile: same size,
 // immediately to the right when that fits the 12-column grid, otherwise
@@ -95,6 +96,7 @@ function placementNextTo(anchor: DashboardPlacement) {
 }
 
 export default function DashboardDetail() {
+  const { t } = useI18n();
   const router = useRouter();
   const utils = api.useUtils();
   const capture = usePostHogClientCapture();
@@ -1122,9 +1124,9 @@ export default function DashboardDetail() {
         scrollable
         headerProps={{
           title:
-            (dashboard.data?.name || "Dashboard") +
+            t(dashboard.data?.name || "Dashboard") +
             (dashboard.data?.owner === "LANGFUSE"
-              ? " (Langfuse Maintained)"
+              ? t("（Langfuse 官方维护）")
               : ""),
           titleContent:
             hasCUDAccess && dashboard.data ? (

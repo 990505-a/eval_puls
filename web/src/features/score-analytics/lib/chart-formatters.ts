@@ -5,6 +5,7 @@ import {
   type IntervalConfig,
   type TimeRange,
 } from "@/src/utils/date-range-utils";
+import { dateFnsOptions } from "@/src/i18n/date-locale";
 
 /**
  * Format a timestamp for chart X-axis labels using dynamic formatting
@@ -28,7 +29,7 @@ export function formatChartTimestamp(
   timeRange: TimeRange,
 ): string {
   const formatString = getChartAxisFormat(interval, timeRange);
-  return format(date, formatString);
+  return format(date, formatString, dateFnsOptions());
 }
 
 /**
@@ -53,5 +54,5 @@ export function formatChartTooltipTimestamp(
   timeRange: TimeRange,
 ): string {
   const formatString = getChartTooltipFormat(interval, timeRange);
-  return format(date, formatString);
+  return format(date, formatString, dateFnsOptions());
 }

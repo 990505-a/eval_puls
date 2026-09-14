@@ -9,6 +9,7 @@ import { useQueryParams, withDefault, NumberParam } from "use-query-params";
 import { formatDistanceToNow } from "date-fns";
 import { formatIntervalSeconds } from "@/src/utils/dates";
 import { useRowHeightLocalStorage } from "@/src/components/table/data-table-row-height-switch";
+import { dateFnsOptions } from "@/src/i18n/date-locale";
 
 type ActionExecutionRow = {
   id: string;
@@ -74,7 +75,7 @@ export const AutomationExecutionsTable: React.FC<
         return (
           <div className="flex flex-col">
             <span className="text-xs">
-              {formatDistanceToNow(date, { addSuffix: true })}
+              {formatDistanceToNow(date, dateFnsOptions({ addSuffix: true }))}
             </span>
             <span className="text-muted-foreground text-xs">
               {date.toLocaleString()}

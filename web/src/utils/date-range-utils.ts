@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { addMinutes, format } from "date-fns";
 import { type DateTrunc } from "@langfuse/shared/src/server";
+import { dateFnsOptions } from "@/src/i18n/date-locale";
 
 interface TimeRangeDefinition {
   label: string;
@@ -334,12 +335,12 @@ export const formatDateRange = (from: Date, to: Date) => {
     // Show just dates for full day ranges
     const fromPattern = showFromYear ? "LLL dd, yyyy" : "LLL dd";
     const toPattern = showToYear ? "LLL dd, yyyy" : "LLL dd";
-    return `${format(from, fromPattern)} - ${format(to, toPattern)}`;
+    return `${format(from, fromPattern, dateFnsOptions())} - ${format(to, toPattern, dateFnsOptions())}`;
   }
   // Show dates with times for partial day ranges
   const fromPattern = showFromYear ? "LLL dd yyyy, HH:mm" : "LLL dd, HH:mm";
   const toPattern = showToYear ? "LLL dd yyyy, HH:mm" : "LLL dd, HH:mm";
-  return `${format(from, fromPattern)} - ${format(to, toPattern)}`;
+  return `${format(from, fromPattern, dateFnsOptions())} - ${format(to, toPattern, dateFnsOptions())}`;
 };
 
 export type RelativeTimeRange = {

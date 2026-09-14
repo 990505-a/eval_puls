@@ -8,6 +8,7 @@
 import Link from "next/link";
 import { ExternalLinkIcon } from "lucide-react";
 import { Badge } from "@/src/components/ui/badge";
+import { useI18n } from "@/src/i18n/provider";
 
 export function SessionBadge({
   sessionId,
@@ -16,9 +17,10 @@ export function SessionBadge({
   sessionId: string | null;
   projectId: string;
 }) {
+  const { t } = useI18n();
   if (!sessionId) return null;
 
-  const text = `Session: ${sessionId}`;
+  const text = t("Session: {id}").replace("{id}", sessionId);
 
   return (
     <Link
@@ -42,9 +44,10 @@ export function UserIdBadge({
   userId: string | null;
   projectId: string;
 }) {
+  const { t } = useI18n();
   if (!userId) return null;
 
-  const text = `User ID: ${userId}`;
+  const text = t("User ID: {id}").replace("{id}", userId);
 
   return (
     <Link
@@ -68,9 +71,10 @@ export function TargetTraceBadge({
   targetTraceId: string | null;
   projectId: string;
 }) {
+  const { t } = useI18n();
   if (!targetTraceId) return null;
 
-  const text = `Target Trace: ${targetTraceId}`;
+  const text = t("Target Trace: {id}").replace("{id}", targetTraceId);
 
   return (
     <Link

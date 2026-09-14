@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ExternalLinkIcon } from "lucide-react";
 import { Badge } from "@/src/components/ui/badge";
 import { api } from "@/src/utils/api";
+import { useI18n } from "@/src/i18n/provider";
 
 export const PromptBadge = (props: { promptId: string; projectId: string }) => {
   const prompt = api.prompts.byId.useQuery({
@@ -9,9 +10,13 @@ export const PromptBadge = (props: { promptId: string; projectId: string }) => {
     projectId: props.projectId,
   });
 
+  const { t } = useI18n();
+
   if (prompt.isLoading || !prompt.data) return null;
 
-  const text = `Prompt: ${prompt.data.name} - v${prompt.data.version}`;
+  const text = t("Prompt: {name} - v{version}")
+    .replace("{name}", prompt.data.name)
+    .replace("{version}", String(prompt.data.version));
 
   return (
     <Link

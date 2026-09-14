@@ -50,28 +50,31 @@ docker compose --profile langfuse up -d langfuse-web
 
 设计原则：**英文原文即 key，中文走字典，未翻译自动回退英文。**
 
+两层机制：
+
+1. **t() 包裹层**（精确）：咽喉组件里显式 `t("English")`，
+   覆盖侧边栏/页面标题/表格列头/筛选工具栏等。
+2. **DOM 兜底层**（广覆盖）：locale=zh-CN 时 `i18n/dom-translator.ts`
+   监听 DOM，把与词典精确匹配的文本节点/placeholder/title/aria-label
+   替换为中文；React 重渲染刷回英文时自动再次替换。
+   于是**任意未包裹的页面、弹窗、动态表格都能翻译**——词典里有多少
+   词条就有多少覆盖，无需改组件代码。跳代码编辑器（monaco/codemirror/
+   pre/code）与可编辑区，纯精确匹配不误伤用户数据。
+
 | 文件 | 作用 |
 |---|---|
 | `web/src/i18n/config.ts` | locale 定义、存储 key |
 | `web/src/i18n/provider.tsx` | `I18nProvider`（挂载于 `pages/_app.tsx` 最外层）、`useI18n()` |
-| `web/src/i18n/zh-CN.ts` | 中文词典（英文原文 → 中文） |
+| `web/src/i18n/zh-CN.ts` | 人工精校词典（导航/表头等） |
+| `web/src/i18n/auto-zh-CN.ts` | 批量补充词典（源码抽取＋翻译，持续扩充） |
+| `web/src/i18n/dom-translator.ts` | DOM 兜底翻译层 |
 | `web/src/components/nav/language-toggle.tsx` | 用户菜单里的语言切换器 |
 
-翻译注入点是少量「咽喉」组件，改动面小、上游合并成本低：
+### 补充翻译（两种方式，都不用重建镜像）
 
-- `components/nav/nav-main.tsx` — 整个侧边栏（含分组标题）
-- `components/layouts/page-header.tsx` / `page-tabs.tsx` / `breadcrumb.tsx` /
-  `mobile-page-title.tsx` — 所有页面的标题、标签、面包屑
-- `components/table/data-table.tsx` — **全部表格的字符串列头**
-- `components/table/data-table-controls.tsx` — 筛选侧栏工具栏
-
-### 补充翻译
-
-1. 在 `zh-CN.ts` 加一行 `"English text": "中文"`；
-2. 若该文案尚未经过 `t()`，把渲染处包上 `{t("English text")}`
-   （组件内先 `const { t } = useI18n();`）；
-3. 新增语言：建 `xx-YY.ts` 词典，在 `provider.tsx` 的
-   `DICTIONARIES` 与 `config.ts` 的 `LOCALES`/`LOCALE_LABELS` 注册。
+- **加词条**：往 `auto-zh-CN.ts` 加一行 `"English原文": "中文"`，
+  重新构建镜像即可生效——**不需要碰任何组件代码**（DOM 层自动生效）。
+- **精确包裹**（可选）：在组件里 `const { t } = useI18n();` 后用 `{t("English")}`。
 
 ### 同步上游
 

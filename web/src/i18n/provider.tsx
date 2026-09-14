@@ -8,10 +8,15 @@ import {
   type ReactNode,
 } from "react";
 import { zhCN } from "@/src/i18n/zh-CN";
+import { autoZhCN } from "@/src/i18n/auto-zh-CN";
+import {
+  startDomTranslator,
+  stopDomTranslator,
+} from "@/src/i18n/dom-translator";
 import { LOCALE_STORAGE_KEY, type Locale } from "@/src/i18n/config";
 
 const DICTIONARIES: Partial<Record<Locale, Record<string, string>>> = {
-  "zh-CN": zhCN,
+  "zh-CN": { ...zhCN, ...autoZhCN },
 };
 
 type I18nContextValue = {
@@ -48,17 +53,36 @@ export function I18nProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     document.documentElement.lang = locale;
+    if (locale === "zh-CN") {
+      // 对未被 t() 包裹的文案做兜底翻译（含动态渲染的弹窗/表格）
+      startDomTranslator();
+    } else {
+      stopDomTranslator();
+    }
   }, [locale]);
 
-  const setLocale = useCallback((next: Locale) => {
-    setLocaleState(next);
-    try {
-      window.localStorage.setItem(LOCALE_STORAGE_KEY, next);
-    } catch {
-      // localStorage can be unavailable (private mode); locale still applies
-      // for this session.
-    }
-  }, []);
+  const setLocale = useCallback(
+    (next: Locale) => {
+      // 从中文切回英文时，DOM 兜底翻译无法可靠还原 → 整页刷新最干净
+      if (next === "en" && locale === "zh-CN") {
+        try {
+          window.localStorage.setItem(LOCALE_STORAGE_KEY, next);
+        } catch {
+          /* ignore */
+        }
+        window.location.reload();
+        return;
+      }
+      setLocaleState(next);
+      try {
+        window.localStorage.setItem(LOCALE_STORAGE_KEY, next);
+      } catch {
+        // localStorage can be unavailable (private mode); locale still applies
+        // for this session.
+      }
+    },
+    [locale],
+  );
 
   const t = useCallback(
     (key: string) => {

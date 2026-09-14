@@ -5,6 +5,7 @@ import { InfoIcon } from "lucide-react";
 import { ActionButton } from "@/src/components/ActionButton";
 import { Alert, AlertTitle, AlertDescription } from "@/src/components/ui/alert";
 import { StatusBadge } from "@/src/components/layouts/status-badge";
+import { useI18n } from "@/src/i18n/provider";
 
 export interface ValueProposition {
   title: string;
@@ -88,6 +89,8 @@ export function SplashScreen({
   children,
   videoPosition = "top",
 }: SplashScreenProps) {
+  const { t } = useI18n();
+
   const mediaBlock = (
     <>
       {videoSrc && <VideoPlayer videoSrc={videoSrc} />}
@@ -117,10 +120,12 @@ export function SplashScreen({
             {waitingFor}
           </StatusBadge>
         )}
-        <h2 className="mb-2 text-2xl font-bold">{title}</h2>
+        <h2 className="mb-2 text-2xl font-bold">{t(title)}</h2>
         {/* text-base: without a size token this fell through to the 16px
             browser default — off the type scale. */}
-        <div className="text-muted-foreground text-base">{description}</div>
+        <div className="text-muted-foreground text-base">
+          {typeof description === "string" ? t(description) : description}
+        </div>
       </div>
 
       <div className="mb-8 flex w-full flex-wrap justify-center gap-4">
@@ -131,7 +136,7 @@ export function SplashScreen({
               onClick={primaryAction.onClick}
               href={primaryAction.href}
             >
-              {primaryAction.label}
+              {t(primaryAction.label)}
             </ActionButton>
           ))}
         {secondaryAction &&
@@ -142,7 +147,7 @@ export function SplashScreen({
               onClick={secondaryAction.onClick}
               href={secondaryAction.href}
             >
-              {secondaryAction.label}
+              {t(secondaryAction.label)}
             </ActionButton>
           ))}
       </div>
@@ -150,8 +155,10 @@ export function SplashScreen({
       {gettingStarted && (
         <Alert className="w-full max-w-3xl">
           <InfoIcon className="mr-2 h-4 w-4" />
-          <AlertTitle>Getting Started</AlertTitle>
-          <AlertDescription>{gettingStarted}</AlertDescription>
+          <AlertTitle>{t("Getting Started")}</AlertTitle>
+          <AlertDescription>
+            {typeof gettingStarted === "string" ? t(gettingStarted) : gettingStarted}
+          </AlertDescription>
         </Alert>
       )}
 
@@ -179,12 +186,12 @@ export function SplashScreen({
                 )}
               >
                 <div className="mb-2 flex items-center gap-3">
-                  <h3 className="text-xl font-bold">{step.title}</h3>
+                  <h3 className="text-xl font-bold">{t(step.title)}</h3>
                   {step.badge}
                 </div>
                 {step.description && (
                   <p className="text-muted-foreground text-sm leading-6">
-                    {step.description}
+                    {t(step.description)}
                   </p>
                 )}
                 {step.content && <div className="mt-3">{step.content}</div>}
@@ -201,8 +208,8 @@ export function SplashScreen({
           {valuePropositions.map((prop, index) => (
             <Alert key={index}>
               {prop.icon}
-              <AlertTitle>{prop.title}</AlertTitle>
-              <AlertDescription>{prop.description}</AlertDescription>
+              <AlertTitle>{t(prop.title)}</AlertTitle>
+              <AlertDescription>{t(prop.description)}</AlertDescription>
             </Alert>
           ))}
         </div>

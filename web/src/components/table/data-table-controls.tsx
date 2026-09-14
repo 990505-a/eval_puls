@@ -1539,7 +1539,12 @@ function CategoricalSelectContent({
               to learn how to add sessions to your {tableName}.
             </span>
           ) : filterKey === "name" ? (
-            <span>No {tableName} names found in the given time range.</span>
+            <span>
+              {t("No {table} names found in the given time range.").replace(
+                "{table}",
+                ENVIRONMENT_TABLE_LABELS[tableName] ?? tableName,
+              )}
+            </span>
           ) : filterKey === "tags" ? (
             <span>
               Tags let you filter {tableName} according to custom categories
@@ -1639,9 +1644,12 @@ function CategoricalSelectContent({
                 rel="noopener noreferrer"
                 className="hover:text-foreground underline"
               >
-                See docs
+                {t("See docs")}
               </a>{" "}
-              on how to add environments to your {tableName}.
+              {t("on how to add environments to your {table}.").replace(
+                "{table}",
+                ENVIRONMENT_TABLE_LABELS[tableName] ?? tableName,
+              )}
             </div>
           ) : null}
         </>
@@ -1649,6 +1657,14 @@ function CategoricalSelectContent({
     </div>
   );
 }
+
+// 环境筛选提示里用到的表名（tableName 传的是英文枚举值）
+const ENVIRONMENT_TABLE_LABELS: Record<string, string> = {
+  traces: "链路",
+  sessions: "会话",
+  observations: "观测记录",
+  scores: "评分",
+};
 
 export function NumericFacet({
   label,

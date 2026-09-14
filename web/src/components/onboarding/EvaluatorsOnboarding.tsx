@@ -6,6 +6,7 @@ import {
 import { Bot, Gauge, Zap, BarChart4 } from "lucide-react";
 import { useIsCodeEvalEnabled } from "@/src/features/evals/hooks/useIsCodeEvalEnabled";
 import { EvalTemplateSourceCodeLanguage } from "@langfuse/shared";
+import { useI18n } from "@/src/i18n/provider";
 
 interface EvaluatorsOnboardingProps {
   projectId: string;
@@ -13,6 +14,7 @@ interface EvaluatorsOnboardingProps {
 
 export function EvaluatorsOnboarding({ projectId }: EvaluatorsOnboardingProps) {
   const { enabled, supportedSourceCodeLanguages } = useIsCodeEvalEnabled();
+  const { t } = useI18n();
   const codeEvaluatorLanguageDescription =
     supportedSourceCodeLanguages.includes(EvalTemplateSourceCodeLanguage.PYTHON)
       ? "TypeScript or Python"
@@ -51,21 +53,24 @@ export function EvaluatorsOnboarding({ projectId }: EvaluatorsOnboardingProps) {
         title="Get started with evaluations"
         description={
           <>
-            Use evaluators to score traces and observations automatically.
-            Langfuse supports two evaluator types:
+            {t(
+              "Use evaluators to score traces and observations automatically.",
+            )}{" "}
+            {t("Langfuse supports two evaluator types:")}
             <ul className="text-muted-foreground mx-auto mt-2 max-w-2xl list-disc space-y-2 pl-5 text-left text-sm">
               <li>
                 <span className="text-foreground font-bold">
-                  LLM-as-a-judge evaluators
+                  {t("LLM-as-a-judge evaluators")}
                 </span>{" "}
-                use an LLM to score outputs against natural-language criteria.
+                {t("use an LLM to score outputs against natural-language criteria.")}
               </li>
               <li>
                 <span className="text-foreground font-bold">
-                  Code evaluators
+                  {t("Code evaluators")}
                 </span>{" "}
-                use {codeEvaluatorLanguageDescription} logic for deterministic,
-                custom scoring.
+                {t(
+                  "use {language} logic for deterministic, custom scoring.",
+                ).replace("{language}", t(codeEvaluatorLanguageDescription))}
               </li>
             </ul>
           </>

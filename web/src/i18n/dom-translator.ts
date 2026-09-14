@@ -19,6 +19,14 @@ const DICT: Map<string, string> = new Map<string, string>([
   ...Object.entries(autoZhCN),
 ]);
 
+// 大小写不同但内容一致的文案（"Search Projects" vs "Search projects"）常同时存在。
+// 只对足够长、且含空格的键建立小写索引，避免把 "Run"/"Start" 这类单词误匹配到用户数据。
+const DICT_LOWER: Map<string, string> = new Map<string, string>(
+  [...DICT.entries()]
+    .filter(([key]) => key.length >= 12 && key.includes(" "))
+    .map(([key, value]) => [key.toLowerCase(), value]),
+);
+
 const TRANSLATABLE_ATTRS = ["placeholder", "title", "aria-label", "alt"];
 
 // 整个子树跳过（代码/数据展示/富文本编辑区）
@@ -39,9 +47,19 @@ const SKIP_SUBTREE_SELECTOR = [
 // 元素本身跳过子节点遍历，但属性仍处理（如 input 的 placeholder）
 const LEAF_ONLY_TAGS = new Set(["INPUT", "IMG", "BR", "HR", "SVG", "PATH", "CANVAS", "VIDEO", "AUDIO"]);
 
+// 页面标题形如 "<页面名> | Langfuse"，正文里常有一份用于无障碍的同名文本，
+// 浏览器标签页也用它。整串匹配失败时退一步翻译竖线前的部分。
+const TITLE_SUFFIX = /\s*\|\s*Langfuse$/;
+
 function lookup(text: string): string | undefined {
-  const hit = DICT.get(text);
-  return hit !== undefined && hit !== text ? hit : undefined;
+  const hit = DICT.get(text) ?? DICT_LOWER.get(text.toLowerCase());
+  if (hit !== undefined && hit !== text) return hit;
+  if (TITLE_SUFFIX.test(text)) {
+    const head = text.replace(TITLE_SUFFIX, "");
+    const inner = DICT.get(head) ?? DICT_LOWER.get(head.toLowerCase());
+    if (inner !== undefined) return inner + " | Langfuse";
+  }
+  return undefined;
 }
 
 function translateTextNode(node: Text): void {
@@ -78,6 +96,15 @@ function translateElement(el: Element): void {
 }
 
 let observer: MutationObserver | null = null;
+let titleObserver: MutationObserver | null = null;
+
+// 路由切换时 next/head 会替换 <title>，body 观察不到，单独盯 head。
+function translateTitle(): void {
+  const raw = document.title;
+  if (!raw) return;
+  const hit = lookup(raw);
+  if (hit !== undefined) document.title = hit;
+}
 
 export function startDomTranslator(): void {
   if (observer || typeof window === "undefined" || !document.body) return;
@@ -108,6 +135,10 @@ export function startDomTranslator(): void {
     attributeFilter: TRANSLATABLE_ATTRS,
   });
 
+  titleObserver = new MutationObserver(translateTitle);
+  titleObserver.observe(document.head, { childList: true, subtree: true, characterData: true });
+  translateTitle();
+
   // 首屏存量内容
   translateElement(document.body);
 }
@@ -115,4 +146,6 @@ export function startDomTranslator(): void {
 export function stopDomTranslator(): void {
   observer?.disconnect();
   observer = null;
+  titleObserver?.disconnect();
+  titleObserver = null;
 }

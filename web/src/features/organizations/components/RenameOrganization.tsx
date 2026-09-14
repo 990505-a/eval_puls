@@ -19,8 +19,10 @@ import { useQueryOrganization } from "@/src/features/organizations/hooks";
 import { Card } from "@/src/components/ui/card";
 import { LockIcon } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { useI18n } from "@/src/i18n/provider";
 
 export default function RenameOrganization() {
+  const { t } = useI18n();
   const { update: updateSession } = useSession();
   const utils = api.useUtils();
   const capture = usePostHogClientCapture();
@@ -78,7 +80,8 @@ export default function RenameOrganization() {
           </p>
         ) : (
           <p className="mb-4 text-sm">
-            Your Organization is currently named &quot;<b>{orgName}</b>
+            {t("Your Organization is currently named")} &quot;
+            <b>{orgName}</b>
             &quot;.
           </p>
         )}

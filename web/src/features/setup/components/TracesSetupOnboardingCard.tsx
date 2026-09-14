@@ -12,6 +12,7 @@ import { usePostHogClientCapture } from "@/src/features/posthog-analytics/usePos
 import { Check, Copy, LockIcon, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { useI18n } from "@/src/i18n/provider";
 import { toast } from "sonner";
 
 const SKILLS_INSTALL_COMMAND =
@@ -26,6 +27,7 @@ function CopyableSnippet({
   value: string;
   onCopy?: () => void;
 }) {
+  const { t } = useI18n();
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -35,7 +37,7 @@ function CopyableSnippet({
       setCopied(true);
       setTimeout(() => setCopied(false), 1000);
     } catch {
-      toast.error("Failed to copy to clipboard");
+      toast.error(t("Failed to copy to clipboard"));
     }
   };
 
@@ -51,7 +53,7 @@ function CopyableSnippet({
         onClick={() => handleCopy()}
       >
         {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-        {copied ? "Copied" : "Copy prompt"}
+        {copied ? t("Copied") : t("Copy prompt")}
       </Button>
     </div>
   );
@@ -62,6 +64,7 @@ export function TracesSetupOnboardingCard({
 }: {
   projectId: string;
 }) {
+  const { t } = useI18n();
   const capture = usePostHogClientCapture();
   const baseUrl = useLangfuseBaseUrl();
   const hasApiKeyCreateAccess = useHasProjectAccess({
@@ -86,7 +89,7 @@ export function TracesSetupOnboardingCard({
       await mutCreateApiKey.mutateAsync({ projectId });
     } catch (error) {
       console.error("Error creating API key:", error);
-      toast.error("Failed to create API key");
+      toast.error(t("Failed to create API key"));
     }
   };
 
@@ -119,7 +122,7 @@ export function TracesSetupOnboardingCard({
                   loading={mutCreateApiKey.isPending}
                   className="self-start"
                 >
-                  Create new API key
+                  {t("Create new API key")}
                 </Button>
               ) : (
                 <Button disabled className="self-start">
@@ -127,14 +130,14 @@ export function TracesSetupOnboardingCard({
                     className="mr-2 -ml-0.5 h-4 w-4"
                     aria-hidden="true"
                   />
-                  Create new API key
+                  {t("Create new API key")}
                 </Button>
               )}
               <ActionButton
                 href={`/project/${projectId}/settings/api-keys`}
                 variant="secondary"
               >
-                Manage API keys
+                {t("Manage API keys")}
               </ActionButton>
             </div>
           ),
@@ -144,7 +147,7 @@ export function TracesSetupOnboardingCard({
           badge: (
             <Badge variant="tertiary" className="gap-1">
               <Sparkles className="h-3 w-3" />
-              Recommended
+              {t("Recommended")}
             </Badge>
           ),
           description:
@@ -172,7 +175,7 @@ export function TracesSetupOnboardingCard({
                     })
                   }
                 >
-                  or follow our docs to set up tracing manually
+                  {t("or follow our docs to set up tracing manually")}
                 </Link>
               </div>
             </>

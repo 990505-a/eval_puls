@@ -9,6 +9,7 @@ import { type Session } from "next-auth";
 import { Fragment } from "react";
 import { env } from "@/src/env.mjs";
 import { createOrganizationRoute } from "@/src/features/setup/setupRoutes";
+import { useI18n } from "@/src/i18n/provider";
 
 type Organization = NonNullable<Session["user"]>["organizations"][number];
 
@@ -25,9 +26,10 @@ type OrganizationDropdownMenuProps = {
 
 export function OrganizationDropdownMenu(props: OrganizationDropdownMenuProps) {
   const { canCreateOrganizations, getOrgPath } = props;
+  const { t } = useI18n();
 
   return (
-    <DropdownMenuContent align="start" header="Organizations" maxHeight="15rem">
+    <DropdownMenuContent align="start" header={t("Organizations")} maxHeight="15rem">
       {props.state === "loaded" ? (
         [...props.organizations]
           .sort((a, b) => {
@@ -62,7 +64,7 @@ export function OrganizationDropdownMenu(props: OrganizationDropdownMenuProps) {
         <>
           <DropdownMenuSeparator />
           <DropdownMenuItemWithSecondaryAction
-            title="New Organization"
+            title={t("New Organization")}
             href={createOrganizationRoute}
             icon={PlusIcon}
           />

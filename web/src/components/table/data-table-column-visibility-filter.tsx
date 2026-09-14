@@ -47,6 +47,7 @@ import {
 } from "@/src/components/ui/collapsible";
 import { Checkbox } from "@/src/components/ui/checkbox";
 import { Separator } from "@/src/components/ui/separator";
+import { useI18n } from "@/src/i18n/provider";
 
 interface DataTableColumnVisibilityFilterProps<TData, TValue> {
   columns: LangfuseColumnDef<TData, TValue>[];
@@ -96,6 +97,7 @@ function ColumnVisibilityListItem<TData, TValue>({
   columnVisibility: VisibilityState;
   isOrderable?: boolean;
 }) {
+  const { t } = useI18n();
   const isFixedPosition = column.isFixedPosition ?? false;
   const { attributes, isDragging, listeners, setNodeRef, transform } =
     useSortable({
@@ -163,7 +165,7 @@ function ColumnVisibilityListItem<TData, TValue>({
           {...listeners}
           variant="ghost"
           size="xs"
-          title="Drag and drop to reorder columns"
+          title={t("Drag and drop to reorder columns")}
           className="invisible group-hover:visible"
         >
           <Menu className="h-3 w-3" />
@@ -190,6 +192,7 @@ function GroupVisibilityHeader<TData, TValue>({
   children: React.ReactNode;
   toggleAll: () => void;
 }) {
+  const { t } = useI18n();
   const { attributes, isDragging, listeners, setNodeRef, transform } =
     useSortable({
       id: column.accessorKey,
@@ -232,7 +235,7 @@ function GroupVisibilityHeader<TData, TValue>({
                 {...listeners}
                 variant="ghost"
                 size="xs"
-                title="Drag and drop to reorder columns"
+                title={t("Drag and drop to reorder columns")}
                 className="opacity-0 transition-opacity group-hover:opacity-100"
               >
                 <Menu className="h-3 w-3" />
@@ -298,6 +301,7 @@ export function DataTableColumnVisibilityFilter<TData, TValue>({
   setColumnOrder,
 }: DataTableColumnVisibilityFilterProps<TData, TValue>) {
   const capture = usePostHogClientCapture();
+  const { t } = useI18n();
   const [openGroups, setOpenGroups] = React.useState<Record<string, boolean>>(
     {},
   );
@@ -396,7 +400,7 @@ export function DataTableColumnVisibilityFilter<TData, TValue>({
       <Drawer modal={false}>
         <DrawerTrigger asChild>
           <Button variant="outline" title="Show/hide columns">
-            <span>Columns</span>
+            <span>{t("Columns")}</span>
             <div className="bg-input ml-1 rounded-sm px-1 text-xs">{`${count}/${total}`}</div>
           </Button>
         </DrawerTrigger>
@@ -441,8 +445,8 @@ export function DataTableColumnVisibilityFilter<TData, TValue>({
                   >
                     <span className="text-sm font-bold">
                       {count === total
-                        ? "Deselect All Columns"
-                        : "Select All Columns"}
+                        ? t("Deselect All Columns")
+                        : t("Select All Columns")}
                     </span>
                     <div className="bg-input ml-1 rounded-sm px-1 text-xs">{`${count}/${total}`}</div>
                   </Button>

@@ -78,7 +78,11 @@ export const MobilePageTitle = ({
               <span className="align-middle whitespace-nowrap">
                 &nbsp;
                 <DocPopup
-                  description={help.description}
+                  description={
+                    typeof help.description === "string"
+                      ? t(help.description)
+                      : help.description
+                  }
                   href={help.href}
                   className={help.className}
                 />

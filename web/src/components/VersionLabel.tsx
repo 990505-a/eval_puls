@@ -25,9 +25,11 @@ import { usePlan } from "@/src/features/entitlements/hooks";
 import { isSelfHostedPlan, planLabels } from "@langfuse/shared";
 import { StatusBadge } from "@/src/components/layouts/status-badge";
 import { useLangfuseCloudRegion } from "@/src/features/organizations/hooks";
+import { useI18n } from "@/src/i18n/provider";
 
 export const VersionLabel = ({ className }: { className?: string }) => {
   const { isLangfuseCloud } = useLangfuseCloudRegion();
+  const { t } = useI18n();
 
   const backgroundMigrationStatus = api.backgroundMigrations.status.useQuery(
     undefined,
@@ -107,14 +109,18 @@ export const VersionLabel = ({ className }: { className?: string }) => {
         {hasUpdate ? (
           <>
             <DropdownMenuLabel>
-              New {checkUpdate.data?.updateType} version:{" "}
+              {checkUpdate.data?.updateType === "major"
+                ? t("New major version:")
+                : t("New minor version:")}{" "}
               {checkUpdate.data?.latestRelease}
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
           </>
         ) : !isLangfuseCloud ? (
           <>
-            <DropdownMenuLabel>This is the latest release</DropdownMenuLabel>
+            <DropdownMenuLabel>
+              {t("This is the latest release")}
+            </DropdownMenuLabel>
             <DropdownMenuSeparator />
           </>
         ) : null}
@@ -122,7 +128,7 @@ export const VersionLabel = ({ className }: { className?: string }) => {
           <>
             <DropdownMenuLabel className="flex items-center font-normal">
               <BadgeCheck size={16} className="mr-2" />
-              {selfHostedPlanLabel.long}
+              {t(selfHostedPlanLabel.long)}
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
           </>
@@ -133,14 +139,14 @@ export const VersionLabel = ({ className }: { className?: string }) => {
             target="_blank"
           >
             <SiGithub size={16} className="mr-2" />
-            Releases
+            {t("Releases")}
           </Link>
         </DropdownMenuItem>
         {!isLangfuseCloud && (
           <DropdownMenuItem asChild>
             <Link href="/background-migrations">
               <ArrowUp10 size={16} className="mr-2" />
-              Background Migrations
+              {t("Background Migrations")}
               {showBackgroundMigrationStatus && (
                 <StatusBadge
                   type={backgroundMigrationStatus.data?.status.toLowerCase()}
@@ -154,20 +160,20 @@ export const VersionLabel = ({ className }: { className?: string }) => {
         <DropdownMenuItem asChild>
           <Link href="https://langfuse.com/changelog" target="_blank">
             <Newspaper size={16} className="mr-2" />
-            Changelog
+            {t("Changelog")}
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link href="https://langfuse.com/roadmap" target="_blank">
             <Map size={16} className="mr-2" />
-            Roadmap
+            {t("Roadmap")}
           </Link>
         </DropdownMenuItem>
         {!isLangfuseCloud && (
           <DropdownMenuItem asChild>
             <Link href="https://langfuse.com/pricing-self-host" target="_blank">
               <Info size={16} className="mr-2" />
-              Compare Versions
+              {t("Compare Versions")}
             </Link>
           </DropdownMenuItem>
         )}
@@ -180,7 +186,7 @@ export const VersionLabel = ({ className }: { className?: string }) => {
                 target="_blank"
               >
                 <HardDriveDownload size={16} className="mr-2" />
-                Update
+                {t("Update")}
               </Link>
             </DropdownMenuItem>
           </>

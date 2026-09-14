@@ -2,6 +2,7 @@ import React from "react";
 import { cn } from "@/src/utils/tailwind";
 import DocPopup from "@/src/components/layouts/doc-popup";
 import { Skeleton } from "@/src/components/ui/skeleton";
+import { useI18n } from "@/src/i18n/provider";
 
 interface NoDataOrLoadingProps {
   isLoading: boolean;
@@ -20,6 +21,7 @@ const NoData = ({
   children,
   className,
 }: NoDataProps) => {
+  const { t } = useI18n();
   return (
     <div
       className={cn(
@@ -27,7 +29,7 @@ const NoData = ({
         className,
       )}
     >
-      <p className="text-muted-foreground">{noDataText}</p>
+      <p className="text-muted-foreground">{t(noDataText)}</p>
       {children}
     </div>
   );

@@ -17,6 +17,7 @@ import {
 import { usePostHogClientCapture } from "@/src/features/posthog-analytics/usePostHogClientCapture";
 import Spinner from "@/src/components/design-system/Spinner/Spinner";
 import { Input } from "@/src/components/ui/input";
+import { useI18n } from "@/src/i18n/provider";
 import { useEffect, useState } from "react";
 
 interface DataTablePaginationProps<TData> {
@@ -36,6 +37,7 @@ export function DataTablePagination<TData>({
 }: DataTablePaginationProps<TData>) {
   const capture = usePostHogClientCapture();
 
+  const { t } = useI18n();
   const currentPage = table.getState().pagination.pageIndex + 1;
   const [inputState, setInputState] = useState<number | string>(currentPage);
 
@@ -82,9 +84,9 @@ export function DataTablePagination<TData>({
       </div>
       <div className="flex flex-wrap items-center space-x-6 lg:space-x-8">
         <div className="flex items-center space-x-2">
-          <p className="text-sm font-bold whitespace-nowrap md:hidden">Rows</p>
+          <p className="text-sm font-bold whitespace-nowrap md:hidden">{t("Rows")}</p>
           <p className="hidden text-sm font-bold whitespace-nowrap md:block">
-            Rows per page
+            {t("Rows per page")}
           </p>
           <Select
             value={`${table.getState().pagination.pageSize}`}
@@ -110,7 +112,7 @@ export function DataTablePagination<TData>({
         <div className="flex items-center justify-center gap-1 text-sm font-bold whitespace-nowrap">
           {table.getPageCount() !== -1 ? (
             <>
-              Page
+              {t("Page")}
               {canJumpPages && (
                 <Input
                   type="number"
@@ -138,12 +140,12 @@ export function DataTablePagination<TData>({
               {!canJumpPages && <span>{currentPage}</span>}
             </>
           ) : (
-            `Page ${currentPage}`
+            `${t("Page")} ${currentPage}`
           )}
           {!hideTotalCount && (
             <>
               {pageCount !== -1 ? (
-                <span>of {pageCount}</span>
+                <span>{t("of")} {pageCount}</span>
               ) : (
                 <span>
                   of{" "}

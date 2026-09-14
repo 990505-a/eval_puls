@@ -51,6 +51,7 @@ import {
   DataTableRefreshButton,
   type RefreshInterval,
 } from "@/src/components/table/data-table-refresh-button";
+import { useI18n } from "@/src/i18n/provider";
 import {
   getSearchButtonLabel,
   getSearchMode,
@@ -234,6 +235,7 @@ export function DataTableToolbar<TData, TValue>({
   );
 
   const capture = usePostHogClientCapture();
+  const { t } = useI18n();
   const showSearchTypeSelector = Boolean(
     searchConfig?.setSearchType && searchConfig.tableAllowsFullTextSearch,
   );
@@ -321,7 +323,7 @@ export function DataTableToolbar<TData, TValue>({
                 autoFocus
                 placeholder={
                   searchConfig.tableAllowsFullTextSearch
-                    ? "Search..."
+                    ? t("Search...")
                     : `Search (${searchConfig.metadataSearchFields?.join(", ")})`
                 }
                 value={searchString}

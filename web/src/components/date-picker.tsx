@@ -11,6 +11,7 @@ import {
   PopoverTrigger,
 } from "@/src/components/ui/popover";
 import { cn } from "@/src/utils/tailwind";
+import { useI18n } from "@/src/i18n/provider";
 import { type DateRange as RDPDateRange } from "react-day-picker";
 import { format } from "date-fns";
 import { useEffect, useMemo, useState, useCallback } from "react";
@@ -324,6 +325,7 @@ export function TimeRangePicker({
   disabled,
   maxRangeMs,
 }: TimeRangePickerProps) {
+  const { t } = useI18n();
   // Determine the range type
   const rangeType: "named" | "custom" | null = timeRange
     ? "from" in timeRange
@@ -513,7 +515,7 @@ export function TimeRangePicker({
           <span className="bg-muted h-5 w-10 rounded px-1.5 text-center text-xs leading-5">
             {setting?.abbreviation || namedRangeValue}
           </span>
-          <span>{setting?.label || namedRangeValue}</span>
+          <span>{t(setting?.label || namedRangeValue || "")}</span>
         </div>
       );
     }
@@ -602,7 +604,7 @@ export function TimeRangePicker({
                     <span className="bg-muted h-5 w-10 rounded px-1.5 text-center text-xs leading-5">
                       {setting.abbreviation}
                     </span>
-                    <span>{setting.label}</span>
+                    <span>{t(setting.label)}</span>
                   </div>
                 );
               })}

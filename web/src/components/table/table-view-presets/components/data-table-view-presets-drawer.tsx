@@ -86,6 +86,7 @@ import isEqual from "lodash/isEqual";
 import { useDefaultViewMutations } from "../hooks/useDefaultViewMutations";
 import { DropdownMenuSeparator } from "@/src/components/ui/dropdown-menu";
 import { summarizeTableViewPreset } from "../lib/viewPreview";
+import { useI18n } from "@/src/i18n/provider";
 
 /**
  * Prefix for system preset IDs. These are page-specific presets defined in code
@@ -202,6 +203,7 @@ export function TableViewPresetsDrawer({
   } = useViewMutations({ handleSetViewId, applyViewState });
   const utils = api.useUtils();
   const capture = usePostHogClientCapture();
+  const { t } = useI18n();
 
   const form = useForm({
     resolver: zodResolver(z.object({ name: z.string().min(1) })),
@@ -456,8 +458,8 @@ export function TableViewPresetsDrawer({
         }}
       >
         <DrawerTrigger asChild>
-          <Button variant="outline" id={triggerId} title="My Views">
-            <span>My Views</span>
+          <Button variant="outline" id={triggerId} title={t("My Views")}>
+            <span>{t("My Views")}</span>
             {selectedViewId ? (
               <ChevronDown className="ml-1 h-4 w-4" />
             ) : (

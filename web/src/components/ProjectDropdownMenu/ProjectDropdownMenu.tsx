@@ -5,6 +5,7 @@ import {
   DropdownMenuLoadingItem,
 } from "@/src/components/ui/dropdown-menu";
 import { createProjectRoute } from "@/src/features/setup/setupRoutes";
+import { useI18n } from "@/src/i18n/provider";
 import { PlusIcon, Settings } from "lucide-react";
 import { type Session } from "next-auth";
 
@@ -26,9 +27,10 @@ type ProjectDropdownMenuProps = {
 
 export function ProjectDropdownMenu(props: ProjectDropdownMenuProps) {
   const { organizationId, canCreateProjects, getProjectPath } = props;
+  const { t } = useI18n();
 
   return (
-    <DropdownMenuContent align="start" header="Projects" maxHeight="15rem">
+    <DropdownMenuContent align="start" header={t("Projects")} maxHeight="15rem">
       {props.state === "loaded" ? (
         props.projects.map((dropdownProject) => (
           <DropdownMenuItemWithSecondaryAction
@@ -54,7 +56,7 @@ export function ProjectDropdownMenu(props: ProjectDropdownMenuProps) {
         <>
           <DropdownMenuSeparator />
           <DropdownMenuItemWithSecondaryAction
-            title="New Project"
+            title={t("New Project")}
             href={createProjectRoute(organizationId)}
             icon={PlusIcon}
           />

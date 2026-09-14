@@ -360,7 +360,7 @@ export function DataTableControls({
         <CategoricalFacet
           key={filter.column}
           filterKey={filter.column}
-          label={filter.label}
+          label={t(filter.label)}
           tooltip={filter.tooltip}
           help={filter.help}
           summary={getFacetSummary(filter)}
@@ -397,7 +397,7 @@ export function DataTableControls({
         <NumericFacet
           key={filter.column}
           filterKey={filter.column}
-          label={filter.label}
+          label={t(filter.label)}
           tooltip={filter.tooltip}
           help={filter.help}
           summary={getFacetSummary(filter)}
@@ -421,7 +421,7 @@ export function DataTableControls({
         <StringFacet
           key={filter.column}
           filterKey={filter.column}
-          label={filter.label}
+          label={t(filter.label)}
           tooltip={filter.tooltip}
           help={filter.help}
           summary={getFacetSummary(filter)}
@@ -442,7 +442,7 @@ export function DataTableControls({
         <KeyValueFacet
           key={filter.column}
           filterKey={filter.column}
-          label={filter.label}
+          label={t(filter.label)}
           tooltip={filter.tooltip}
           help={filter.help}
           summary={getFacetSummary(filter)}
@@ -467,7 +467,7 @@ export function DataTableControls({
         <NumericKeyValueFacet
           key={filter.column}
           filterKey={filter.column}
-          label={filter.label}
+          label={t(filter.label)}
           tooltip={filter.tooltip}
           help={filter.help}
           summary={getFacetSummary(filter)}
@@ -491,7 +491,7 @@ export function DataTableControls({
         <BooleanKeyValueFacet
           key={filter.column}
           filterKey={filter.column}
-          label={filter.label}
+          label={t(filter.label)}
           tooltip={filter.tooltip}
           help={filter.help}
           summary={getFacetSummary(filter)}
@@ -515,7 +515,7 @@ export function DataTableControls({
         <StringKeyValueFacet
           key={filter.column}
           filterKey={filter.column}
-          label={filter.label}
+          label={t(filter.label)}
           tooltip={filter.tooltip}
           help={filter.help}
           summary={getFacetSummary(filter)}
@@ -593,7 +593,7 @@ export function DataTableControls({
                 .filter((filter) => filter.isActive)
                 .slice(0, 6)
                 .map((filter) => {
-                  const line = `${filter.label}: ${
+                  const line = `${t(filter.label)}: ${
                     getFacetSummary(filter) ?? "filtered"
                   }`;
                   return (
@@ -861,7 +861,7 @@ export function DataTableControls({
                           onClick={() => handleAddFilter(filter.column)}
                           className="cursor-pointer"
                         >
-                          {filter.label}
+                          {t(filter.label)}
                         </DropdownMenuItem>
                       );
                     })}

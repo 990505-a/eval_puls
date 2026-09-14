@@ -25,6 +25,7 @@ import { useMediaQuery } from "react-responsive";
 import useLocalStorage from "@/src/components/useLocalStorage";
 import { cn } from "@/src/utils/tailwind";
 import { compactNumberFormatter } from "@/src/utils/numbers";
+import { useI18n } from "@/src/i18n/provider";
 import { Accordion } from "@/src/components/ui/accordion";
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
 import {
@@ -175,6 +176,7 @@ export function DataTableControls({
   const { isLangfuseCloud } = useLangfuseCloudRegion();
   const { setOpen, tableName } = useDataTableControls();
   const capture = usePostHogClientCapture();
+  const { t } = useI18n();
   const [aiPopoverOpen, setAiPopoverOpen] = useState(false);
   const activeFilterCount = queryFilter.filters.filter(
     (filter) => filter.isActive,
@@ -557,7 +559,7 @@ export function DataTableControls({
                 <PanelLeftOpen className="h-3.5 w-3.5" />
               </Button>
             </TooltipTrigger>
-            <TooltipContent side="right">Show filters</TooltipContent>
+            <TooltipContent side="right">{t("Show filters")}</TooltipContent>
           </Tooltip>
         </div>
         {activeFilterCount > 0 && (
@@ -628,9 +630,9 @@ export function DataTableControls({
                   <PanelLeftClose className="h-3.5 w-3.5" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Hide filters</TooltipContent>
+              <TooltipContent>{t("Hide filters")}</TooltipContent>
             </Tooltip>
-            <span className="text-sm font-bold">Filters</span>
+            <span className="text-sm font-bold">{t("Filters")}</span>
             {activeFilterCount > 0 && (
               <Badge variant="secondary" className="h-5 px-1.5 text-xs">
                 {activeFilterCount}
@@ -648,7 +650,7 @@ export function DataTableControls({
                       </Button>
                     </PopoverTrigger>
                   </TooltipTrigger>
-                  <TooltipContent>Filter with AI</TooltipContent>
+                  <TooltipContent>{t("Filter with AI")}</TooltipContent>
                 </Tooltip>
                 <PopoverContent align="center" className="w-[400px]">
                   <DataTableAIFilters
@@ -674,8 +676,8 @@ export function DataTableControls({
                   }
                   aria-label={
                     queryFilter.expanded.length === 0
-                      ? "Expand all filters"
-                      : "Collapse all filters"
+                      ? t("Expand all filters")
+                      : t("Collapse all filters")
                   }
                 >
                   {queryFilter.expanded.length === 0 ? (
@@ -687,8 +689,8 @@ export function DataTableControls({
               </TooltipTrigger>
               <TooltipContent>
                 {queryFilter.expanded.length === 0
-                  ? "Expand all filters"
-                  : "Collapse all filters"}
+                  ? t("Expand all filters")
+                  : t("Collapse all filters")}
               </TooltipContent>
             </Tooltip>
             <DropdownMenu>
@@ -705,7 +707,7 @@ export function DataTableControls({
                     </Button>
                   </DropdownMenuTrigger>
                 </TooltipTrigger>
-                <TooltipContent>Filter options</TooltipContent>
+                <TooltipContent>{t("Filter options")}</TooltipContent>
               </Tooltip>
               <DropdownMenuContent align="end" className="w-48">
                 <DropdownMenuItem
@@ -724,7 +726,7 @@ export function DataTableControls({
                   }}
                   className="cursor-pointer"
                 >
-                  Clear all filters
+                  {t("Clear all filters")}
                 </DropdownMenuItem>
                 {/* Plain item with a TRAILING check instead of
                     DropdownMenuCheckboxItem: its reserved leading indicator
@@ -745,7 +747,7 @@ export function DataTableControls({
                     });
                   }}
                 >
-                  Show only active
+                  {t("Show only active")}
                   {showOnlyActive && <Check className="ml-auto h-3.5 w-3.5" />}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -756,7 +758,7 @@ export function DataTableControls({
                   }}
                   className="cursor-pointer"
                 >
-                  Collapse sidebar
+                  {t("Collapse sidebar")}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -825,7 +827,7 @@ export function DataTableControls({
               >
                 {displayedFilters.length === 0 && (
                   <p className="text-muted-foreground pb-2 text-xs">
-                    No active filters.
+                    {t("No active filters.")}
                   </p>
                 )}
                 <DropdownMenu>
@@ -837,7 +839,7 @@ export function DataTableControls({
                       disabled={addableFilters.length === 0}
                     >
                       <Plus className="mr-1.5 h-3.5 w-3.5" />
-                      Add filter
+                      {t("Add filter")}
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent
@@ -1333,6 +1335,7 @@ function CategoricalSelectContent({
   | "operator"
   | "onOperatorChange"
 >) {
+  const { t } = useI18n();
   // "Show more values" reveals the next PORTION (it does what it says — not
   // expand-everything: value lists can run to 1000+ user IDs); "Show fewer
   // values" collapses back to the cap. Resets by unmounting on collapse.
@@ -1552,7 +1555,7 @@ function CategoricalSelectContent({
               to learn how to add tags to your {tableName}.
             </span>
           ) : (
-            "No options found"
+            t("No options found")
           )}
         </div>
       ) : (
@@ -1563,7 +1566,7 @@ function CategoricalSelectContent({
               <div className="relative">
                 <Search className="text-muted-foreground absolute top-1/2 left-2 h-3.5 w-3.5 -translate-y-1/2" />
                 <Input
-                  placeholder="Filter values"
+                  placeholder={t("Filter values")}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="h-8 pl-7 text-xs"
@@ -1604,7 +1607,7 @@ function CategoricalSelectContent({
                       className="mt-1 h-auto w-full justify-start py-1 pl-7 text-xs"
                     >
                       <ChevronUp className="mr-1 h-3 w-3" />
-                      Show fewer values
+                      {t("Show fewer values")}
                     </Button>
                   )}
                   {canShowMore && (
@@ -1619,7 +1622,7 @@ function CategoricalSelectContent({
                       className="mt-0.5 h-auto w-full justify-start py-1 pl-7 text-xs"
                     >
                       <ChevronDown className="mr-1 h-3 w-3" />
-                      Show more values
+                      {t("Show more values")}
                     </Button>
                   )}
                 </div>
@@ -1833,6 +1836,7 @@ export function StringFacet({
   disabledReason,
   onReset,
 }: StringFacetProps) {
+  const { t } = useI18n();
   const [localValue, setLocalValue] = useState<string>(value);
   // Same render-time adoption as NumericFacet above (no mirror effect).
   const [lastValue, setLastValue] = useState<string>(value);
@@ -1883,13 +1887,13 @@ export function StringFacet({
     >
       <div className="px-4">
         {loading ? (
-          <div className="text-muted-foreground text-sm">Loading...</div>
+          <div className="text-muted-foreground text-sm">{t("Loading...")}</div>
         ) : (
           <Input
             type="text"
             id={`string-${filterKey}`}
             value={localValue}
-            placeholder="Search"
+            placeholder={t("Search")}
             onChange={handleInputChange}
             className="h-8"
           />

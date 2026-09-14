@@ -78,6 +78,7 @@ if (typeof window !== "undefined") {
 import { DetailPageListsProvider } from "@/src/features/navigate-detail-pages/context";
 import { env } from "@/src/env.mjs";
 import { ThemeProvider } from "@/src/features/theming/ThemeProvider";
+import { I18nProvider } from "@/src/i18n/provider";
 import { MarkdownContextProvider } from "@/src/features/theming/useMarkdownContext";
 import { SupportDrawerProvider } from "@/src/features/support-chat/SupportDrawerProvider";
 import { InAppAiAgentProvider } from "@/src/ee/features/in-app-agent/components/InAppAiAgentProvider";
@@ -143,10 +144,11 @@ const MyApp: AppType<{ session: Session | null }> = ({
   );
 
   return (
-    <QueryParamProvider
-      adapter={NextAdapterPages}
-      options={{ enableBatching: true }}
-    >
+    <I18nProvider>
+      <QueryParamProvider
+        adapter={NextAdapterPages}
+        options={{ enableBatching: true }}
+      >
       <TooltipProvider>
         <CommandMenuProvider>
           <PostHogProvider client={posthog}>
@@ -183,7 +185,8 @@ const MyApp: AppType<{ session: Session | null }> = ({
           </PostHogProvider>
         </CommandMenuProvider>
       </TooltipProvider>
-    </QueryParamProvider>
+      </QueryParamProvider>
+    </I18nProvider>
   );
 };
 

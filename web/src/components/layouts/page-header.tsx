@@ -19,6 +19,7 @@ import {
 } from "@/src/components/layouts/page-tabs";
 import { cn } from "@/src/utils/tailwind";
 import { type ReactNode } from "react";
+import { useI18n } from "@/src/i18n/provider";
 
 const containerLayoutClassName =
   "lg:mx-auto lg:w-full lg:max-w-screen-lg lg:px-8 xl:max-w-screen-xl 2xl:max-w-[1400px]";
@@ -61,6 +62,8 @@ const PageHeader = ({
   breadcrumbBadges,
 }: PageHeaderProps) => {
   const hasAppSidebar = useHasAppSidebar();
+  const { t } = useI18n();
+  const translatedTitle = t(title);
   // The sidebar trigger + brand mark only make sense where a real AppSidebar
   // exists to toggle/mirror. On the sidebar-less MinimalLayout (public/shared
   // trace and session views) show the page's own leadingControl instead — no
@@ -155,21 +158,21 @@ const PageHeader = ({
                               className="cursor-help wrap-break-word"
                               data-testid="page-header-title"
                             >
-                              {title}
+                              {translatedTitle}
                             </span>
                           </TooltipTrigger>
                           <TooltipContent side="bottom" className="max-w-xs">
-                            {titleTooltip}
+                            {t(titleTooltip)}
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
                     ) : (
                       <span
                         className="wrap-break-word"
-                        title={title}
+                        title={translatedTitle}
                         data-testid="page-header-title"
                       >
-                        {title}
+                        {translatedTitle}
                       </span>
                     )}
                     {help && (

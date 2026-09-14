@@ -50,6 +50,7 @@ import {
 import { type DataTablePeekViewProps } from "@/src/components/table/peek";
 import isEqual from "lodash/isEqual";
 import { useRouter } from "next/router";
+import { useI18n } from "@/src/i18n/provider";
 import { useColumnSizing } from "@/src/components/table/hooks/useColumnSizing";
 import {
   type TableSelectionStoreLike,
@@ -206,6 +207,7 @@ export function DataTable<TData extends object, TValue>({
   topAlignCells = false,
   cellPadding = "compact",
 }: DataTableProps<TData, TValue>) {
+  const { t } = useI18n();
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const rowheighttw = getRowHeightTailwindClass(rowHeight, customRowHeights);
   const capture = usePostHogClientCapture();
@@ -484,16 +486,20 @@ export function DataTable<TData extends object, TValue>({
                             <span
                               className="truncate leading-normal"
                               title={getPlainTextFromReactNode(
-                                flexRender(
-                                  header.column.columnDef.header,
-                                  header.getContext(),
-                                ),
+                                typeof header.column.columnDef.header === "string"
+                                  ? t(header.column.columnDef.header)
+                                  : flexRender(
+                                      header.column.columnDef.header,
+                                      header.getContext(),
+                                    ),
                               )}
                             >
-                              {flexRender(
-                                header.column.columnDef.header,
-                                header.getContext(),
-                              )}
+                              {typeof header.column.columnDef.header === "string"
+                                ? t(header.column.columnDef.header)
+                                : flexRender(
+                                    header.column.columnDef.header,
+                                    header.getContext(),
+                                  )}
                             </span>
                             {columnDef.headerTooltip && (
                               <DocPopup

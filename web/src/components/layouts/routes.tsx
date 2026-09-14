@@ -32,6 +32,7 @@ import { SidebarMenuButton } from "@/src/components/ui/sidebar";
 import { KeyboardShortcut } from "@/src/components/ui/keyboard-shortcut";
 import { useCommandMenu } from "@/src/features/command-k-menu/CommandMenuProvider";
 import { usePostHogClientCapture } from "@/src/features/posthog-analytics/usePostHogClientCapture";
+import { useI18n } from "@/src/i18n/provider";
 import { CloudStatusMenu } from "@/src/features/cloud-status-notification/components/CloudStatusMenu";
 import { type ProductModule } from "@/src/ee/features/ui-customization/productModuleSchema";
 
@@ -257,6 +258,7 @@ export const ROUTES: Route[] = [
 function CommandMenuTrigger() {
   const { setOpen } = useCommandMenu();
   const capture = usePostHogClientCapture();
+  const { t } = useI18n();
 
   return (
     <SidebarMenuButton
@@ -269,7 +271,7 @@ function CommandMenuTrigger() {
       className="whitespace-nowrap"
     >
       <Search className="h-4 w-4" />
-      Go to...
+      {t("Go to...")}
       <KeyboardShortcut
         className="ml-auto"
         keys={[navigator.userAgent.includes("Mac") ? "⌘" : "Ctrl", "K"]}

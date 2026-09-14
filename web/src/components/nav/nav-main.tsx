@@ -11,6 +11,7 @@ import {
 import Link from "next/link";
 import { type ReactNode } from "react";
 import { type RouteGroup } from "@/src/components/layouts/routes";
+import { useI18n } from "@/src/i18n/provider";
 
 export type NavMainItem = {
   title: string;
@@ -29,10 +30,11 @@ export type NavMainItem = {
 };
 
 function NavItemContent({ item }: { item: NavMainItem }) {
+  const { t } = useI18n();
   return (
     <>
       {item.icon && <item.icon />}
-      <span>{item.title}</span>
+      <span>{t(item.title)}</span>
       {item.label &&
         (typeof item.label === "string" ? (
           <span className="-my-0.5 self-center rounded-sm border px-1 py-0.5 text-xs leading-none break-keep whitespace-nowrap">
@@ -54,6 +56,7 @@ export function NavMain({
     ungrouped: NavMainItem[];
   };
 }) {
+  const { t } = useI18n();
   return (
     <>
       <SidebarGroup>
@@ -64,7 +67,7 @@ export function NavMain({
                 {item.menuNode || (
                   <SidebarMenuButton
                     asChild
-                    tooltip={item.title}
+                    tooltip={t(item.title)}
                     isActive={item.isActive}
                   >
                     <Link
@@ -83,7 +86,7 @@ export function NavMain({
       {items.grouped &&
         Object.entries(items.grouped).map(([group, items]) => (
           <SidebarGroup key={group}>
-            <SidebarGroupLabel>{group}</SidebarGroupLabel>
+            <SidebarGroupLabel>{t(group)}</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {items.map((item) => (
@@ -91,7 +94,7 @@ export function NavMain({
                     {item.menuNode || (
                       <SidebarMenuButton
                         asChild
-                        tooltip={item.title}
+                        tooltip={t(item.title)}
                         isActive={item.isActive}
                       >
                         <Link

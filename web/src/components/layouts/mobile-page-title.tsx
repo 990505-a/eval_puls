@@ -11,6 +11,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/src/components/ui/tooltip";
+import { useI18n } from "@/src/i18n/provider";
 
 /**
  * The page-specific block for the minimal-chrome mobile shell. Rendered between
@@ -29,6 +30,7 @@ export const MobilePageTitle = ({
 }: {
   headerProps: Omit<PageHeaderProps, "container">;
 }) => {
+  const { t } = useI18n();
   const {
     title,
     titleContent,
@@ -62,15 +64,15 @@ export const MobilePageTitle = ({
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <span className="cursor-help">{title}</span>
+                    <span className="cursor-help">{t(title)}</span>
                   </TooltipTrigger>
                   <TooltipContent side="bottom" className="max-w-xs">
-                    {titleTooltip}
+                    {t(titleTooltip)}
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
             ) : (
-              <span title={title}>{title}</span>
+              <span title={t(title)}>{t(title)}</span>
             )}
             {help && (
               <span className="align-middle whitespace-nowrap">

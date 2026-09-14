@@ -26,6 +26,8 @@ import type { RouteGroup } from "@/src/components/layouts/routes";
 import dynamic from "next/dynamic";
 import { ControlledFeaturePreviewModal } from "@/src/features/feature-previews/components/ControlledFeaturePreviewModal";
 import { InAppAgentWindowHost } from "@/src/ee/features/in-app-agent/components/InAppAgentWindowHost";
+import { LanguageToggle } from "@/src/components/nav/language-toggle";
+import { useI18n } from "@/src/i18n/provider";
 
 const CommandMenu = dynamic(
   () =>
@@ -116,6 +118,8 @@ export function AuthenticatedLayout({
 
   const hasFeaturePreviews = isLangfuseCloud || user.v4BetaEnabled === true;
 
+  const { t } = useI18n();
+
   // User navigation items for sidebar dropdown
   const userNavProps = {
     user: {
@@ -124,12 +128,13 @@ export function AuthenticatedLayout({
       avatar: user.image ?? "",
     },
     items: [
-      { name: "Account Settings", href: "/account/settings" },
-      { name: "Theme", onClick: () => {}, content: <ThemeToggle /> },
+      { name: t("Account Settings"), href: "/account/settings" },
+      { name: t("Theme"), onClick: () => {}, content: <ThemeToggle /> },
+      { name: t("Language"), onClick: () => {}, content: <LanguageToggle /> },
       ...(hasFeaturePreviews
         ? [
             {
-              name: "Feature Preview",
+              name: t("Feature Preview"),
               onClick: () => setFeaturePreviewOpen(true),
             },
           ]
@@ -137,11 +142,11 @@ export function AuthenticatedLayout({
       ...(isLangfuseCloud
         ? [
             {
-              name: "Regions",
+              name: t("Regions"),
               subItems: regionMenuItems,
               content: (
                 <>
-                  Regions
+                  {t("Regions")}
                   <div className="ml-2 inline-flex rounded bg-black/5 p-1 text-xs dark:bg-white/10">
                     Current: {currentRegion}
                   </div>
@@ -150,7 +155,7 @@ export function AuthenticatedLayout({
             },
           ]
         : []),
-      { name: "Sign out", onClick: onSignOut },
+      { name: t("Sign out"), onClick: onSignOut },
     ],
   };
 

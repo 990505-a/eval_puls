@@ -65,16 +65,33 @@ docker compose --profile langfuse up -d langfuse-web
 |---|---|
 | `web/src/i18n/config.ts` | locale 定义、存储 key |
 | `web/src/i18n/provider.tsx` | `I18nProvider`（挂载于 `pages/_app.tsx` 最外层）、`useI18n()` |
-| `web/src/i18n/zh-CN.ts` | 人工精校词典（导航/表头等） |
-| `web/src/i18n/auto-zh-CN.ts` | 批量补充词典（源码抽取＋翻译，持续扩充） |
+| `web/src/i18n/zh-CN.ts` | 人工精校词典（导航/表头等，约 225 条） |
+| `web/src/i18n/auto-zh-CN.ts` | 批量词典（源码全量抽取＋翻译，约 3060 条） |
 | `web/src/i18n/dom-translator.ts` | DOM 兜底翻译层 |
 | `web/src/components/nav/language-toggle.tsx` | 用户菜单里的语言切换器 |
+
+词典合计约 3300 条，覆盖：导航/表头/按钮、全部 onboarding 与空状态引导长文、
+筛选配置（写在 `.ts` 里的 `label`/`header`/`falseLabel`）、看板默认组件标题、
+错误与校验提示、订阅/SSO/审计日志等说明文案。
+
+DOM 兜底层的几个细节：
+
+- **大小写兼容**：整串匹配失败时回退小写索引（"Search Projects" 也能命中
+  "Search projects"）；仅对长度 ≥12 且含空格的键建索引，避免误伤单词数据。
+- **页面标题**：`<页面名> | Langfuse` 只翻译竖线前半段，并额外监听 `<head>`，
+  浏览器标签页标题也随路由切换变中文。
+- **模板句**：被 `<code>`/`<i>`/`<Link>` 切开的句子（例如
+  "To start tracking users, you need to add a `userId` …"）无法整串匹配，
+  这类已在源码里改写成 `t("…{table}…").replace("{table}", 值)` 的分段形式。
+- **不误伤**：跳过 monaco/codemirror/`pre`/`code`/`contenteditable`，
+  只做整段精确替换、不改 `value`，所以轨迹内容、模型价格正则、用户数据原样保留。
 
 ### 补充翻译（两种方式，都不用重建镜像）
 
 - **加词条**：往 `auto-zh-CN.ts` 加一行 `"English原文": "中文"`，
   重新构建镜像即可生效——**不需要碰任何组件代码**（DOM 层自动生效）。
-- **精确包裹**（可选）：在组件里 `const { t } = useI18n();` 后用 `{t("English")}`。
+- **精确包裹**（可选）：在组件里 `const { t } = useI18n();` 后用 `{t("English")}`；
+  整句被标签切开时用 `t("… {占位符} …").replace("{占位符}", 值)`。
 
 ### 同步上游
 

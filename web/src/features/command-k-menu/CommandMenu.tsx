@@ -22,6 +22,7 @@ import { useQueryProjectOrOrganization } from "@/src/features/projects/hooks";
 import { api } from "@/src/utils/api";
 import { type NavigationItem } from "@/src/components/layouts/utilities/routes";
 import { useReadPath } from "@/src/features/events";
+import { useI18n } from "@/src/i18n/provider";
 
 type IdNavigationItem = {
   type: "trace_id" | "observation_id";
@@ -203,6 +204,7 @@ function DashboardsGroup({ onNavigate }: { onNavigate: () => void }) {
 }
 
 function ProjectSettingsGroup({ onNavigate }: { onNavigate: () => void }) {
+  const { t } = useI18n();
   const router = useRouter();
   const capture = usePostHogClientCapture();
   const settingsPages = useProjectSettingsPages();
@@ -211,7 +213,7 @@ function ProjectSettingsGroup({ onNavigate }: { onNavigate: () => void }) {
   const projectSettingsItems = settingsPages
     .filter((page) => page.show !== false && !("href" in page))
     .map((page) => ({
-      title: `Project Settings > ${page.title}`,
+      title: `${t("项目设置")} > ${t(page.title)}`,
       url: `/project/${project?.id}/settings${page.slug === "index" ? "" : `/${page.slug}`}`,
       keywords: page.cmdKKeywords || [],
     }));
@@ -221,7 +223,7 @@ function ProjectSettingsGroup({ onNavigate }: { onNavigate: () => void }) {
   return (
     <>
       <CommandSeparator />
-      <CommandGroup heading="Project Settings">
+      <CommandGroup heading={t("Project Settings")}>
         {projectSettingsItems.map((item) => (
           <CommandItem
             key={item.url}
@@ -246,6 +248,7 @@ function ProjectSettingsGroup({ onNavigate }: { onNavigate: () => void }) {
 }
 
 function OrganizationSettingsGroup({ onNavigate }: { onNavigate: () => void }) {
+  const { t } = useI18n();
   const router = useRouter();
   const capture = usePostHogClientCapture();
   const orgSettingsPages = useOrganizationSettingsPages();
@@ -254,7 +257,7 @@ function OrganizationSettingsGroup({ onNavigate }: { onNavigate: () => void }) {
   const orgSettingsItems = orgSettingsPages
     .filter((page) => page.show !== false && !("href" in page))
     .map((page) => ({
-      title: `Organization Settings > ${page.title}`,
+      title: `${t("组织设置")} > ${t(page.title)}`,
       url: `/organization/${organization?.id}/settings${page.slug === "index" ? "" : `/${page.slug}`}`,
       keywords: page.cmdKKeywords || [],
     }));
@@ -264,7 +267,7 @@ function OrganizationSettingsGroup({ onNavigate }: { onNavigate: () => void }) {
   return (
     <>
       <CommandSeparator />
-      <CommandGroup heading="Organization Settings">
+      <CommandGroup heading={t("Organization Settings")}>
         {orgSettingsItems.map((item) => (
           <CommandItem
             key={item.url}
@@ -289,6 +292,7 @@ function OrganizationSettingsGroup({ onNavigate }: { onNavigate: () => void }) {
 }
 
 function AccountSettingsGroup({ onNavigate }: { onNavigate: () => void }) {
+  const { t } = useI18n();
   const router = useRouter();
   const capture = usePostHogClientCapture();
   const accountSettingsPages = useAccountSettingsPages();
@@ -296,7 +300,7 @@ function AccountSettingsGroup({ onNavigate }: { onNavigate: () => void }) {
   const accountSettingsItems = accountSettingsPages
     .filter((page) => !("href" in page))
     .map((page) => ({
-      title: `Account Settings > ${page.title}`,
+      title: `${t("Account Settings")} > ${t(page.title)}`,
       url: `/account/settings${page.slug === "index" ? "" : `/${page.slug}`}`,
       keywords: page.cmdKKeywords || [],
     }));
@@ -306,7 +310,7 @@ function AccountSettingsGroup({ onNavigate }: { onNavigate: () => void }) {
   return (
     <>
       <CommandSeparator />
-      <CommandGroup heading="Account Settings">
+      <CommandGroup heading={t("Account Settings")}>
         {accountSettingsItems.map((item) => (
           <CommandItem
             key={item.url}
@@ -335,6 +339,7 @@ function CommandMenuComponent({
 }: {
   mainNavigation: NavigationItem[];
 }) {
+  const { t } = useI18n();
   const { open, setOpen } = useCommandMenu();
   const capture = usePostHogClientCapture();
   const router = useRouter();
@@ -356,7 +361,7 @@ function CommandMenuComponent({
       if (item.items) {
         // if the item has children, return the children and not the parent
         return item.items.map((child) => ({
-          title: `${item.title} > ${child.title}`,
+          title: `${t(item.title)} > ${t(child.title)}`,
           url: child.url,
         }));
       }

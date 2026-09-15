@@ -57,6 +57,8 @@ import {
   usePaymentBanner,
 } from "@/src/features/payment-banner";
 import { useTopBannerHeight } from "@/src/features/top-banner";
+import { LanguageToggle } from "@/src/components/nav/language-toggle";
+import { useI18n } from "@/src/i18n/provider";
 
 const DISMISSED_SIDEBAR_NOTIFICATIONS_KEY = "dismissed-sidebar-notifications";
 
@@ -166,6 +168,8 @@ export function AuthenticatedLayout({
 
   const hasFeaturePreviews = isLangfuseCloud || user.v4BetaEnabled === true;
 
+  const { t } = useI18n();
+
   // User navigation items for sidebar dropdown
   const sidebarUser = {
     name: user.name ?? "",
@@ -175,29 +179,35 @@ export function AuthenticatedLayout({
   const userMenuItems = [
     {
       type: "link" as const,
-      name: "Account Settings",
+      name: t("Account Settings"),
       href: "/account/settings",
     },
     ...(showV4Migration
       ? [
           {
             type: "link" as const,
-            name: "v4 Migration",
+            name: t("v4 Migration"),
             href: "/v4-migration",
           },
         ]
       : []),
     {
       type: "action" as const,
-      name: "Theme",
+      name: t("Theme"),
       onClick: () => {},
       content: <ThemeToggle />,
+    },
+    {
+      type: "action" as const,
+      name: t("Language"),
+      onClick: () => {},
+      content: <LanguageToggle />,
     },
     ...(hasFeaturePreviews
       ? [
           {
             type: "action" as const,
-            name: "Feature Preview",
+            name: t("Feature Preview"),
             onClick: () => setFeaturePreviewOpen(true),
           },
         ]
@@ -206,11 +216,11 @@ export function AuthenticatedLayout({
       ? [
           {
             type: "submenu" as const,
-            name: "Regions",
+            name: t("Regions"),
             subItems: regionMenuItems,
             content: (
               <>
-                Regions
+                {t("Regions")}
                 <div className="ml-2 inline-flex rounded bg-black/5 p-1 text-xs dark:bg-white/10">
                   Current: {currentRegion}
                 </div>
@@ -223,11 +233,11 @@ export function AuthenticatedLayout({
       ? [
           {
             type: "submenu" as const,
-            name: "Instances",
+            name: t("Instances"),
             subItems: instanceMenuItems,
             content: currentInstance ? (
               <>
-                Instances
+                {t("Instances")}
                 <div className="ml-2 inline-flex rounded bg-black/5 p-1 text-xs dark:bg-white/10">
                   Current: {currentInstance.name}
                 </div>
@@ -236,7 +246,7 @@ export function AuthenticatedLayout({
           },
         ]
       : []),
-    { type: "action" as const, name: "Sign out", onClick: onSignOut },
+    { type: "action" as const, name: t("Sign out"), onClick: onSignOut },
   ];
 
   return (

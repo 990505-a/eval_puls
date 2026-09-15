@@ -84,6 +84,7 @@ import { ResilientSessionProvider } from "@/src/features/auth/components/Resilie
 import { DetailPageListsProvider } from "@/src/features/navigate-detail-pages/context";
 import { env } from "@/src/env.mjs";
 import { ThemeProvider } from "@/src/features/theming/ThemeProvider";
+import { I18nProvider } from "@/src/i18n/provider";
 import { MarkdownContextProvider } from "@/src/features/theming/useMarkdownContext";
 import { MarkdownRenderCharacterLimitProvider } from "@/src/hooks/useMarkdownRenderCharacterLimit";
 import { SupportDrawerProvider } from "@/src/features/support-chat/SupportDrawerProvider";
@@ -171,7 +172,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
   );
 
   return (
-    <>
+    <I18nProvider>
       {/* Replaces Next's default `width=device-width` (next/head dedupes by
           name). `maximum-scale=1` stops iOS Safari auto-zooming a focused
           sub-16px field; iOS ignores `user-scalable=no` for user gestures, so
@@ -233,7 +234,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
           </CommandMenuProvider>
         </TooltipProvider>
       </QueryParamProvider>
-    </>
+    </I18nProvider>
   );
 };
 

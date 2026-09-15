@@ -15,6 +15,7 @@
  */
 
 import { getEvenTickInterval } from "@/src/features/widgets/chart-library/utils";
+import { currentDateLocaleTag } from "@/src/i18n/date-locale";
 
 const MINUTE = 60_000;
 const HOUR = 60 * MINUTE;
@@ -301,24 +302,25 @@ export function prepareTimeAxis(
   // Date/month labels use UTC so a UTC-midnight bucket is not formatted as the
   // previous local evening. Intraday time ticks stay in the browser timezone.
   const calendarTimeZone = mode === "time" ? undefined : "UTC";
+  const dateLocaleTag = currentDateLocaleTag();
 
   const formatTick = (raw: unknown): string => {
     const date = parseChartTimestamp(raw);
     if (!date) return typeof raw === "string" ? raw : "";
     if (mode === "time") {
-      return date.toLocaleTimeString("en-US", {
+      return date.toLocaleTimeString(dateLocaleTag, {
         hour: "numeric",
         ...(subHour ? { minute: "2-digit" } : {}),
       });
     }
     if (mode === "month") {
-      return date.toLocaleDateString("en-US", {
+      return date.toLocaleDateString(dateLocaleTag, {
         timeZone: calendarTimeZone,
         month: "short",
         year: "numeric",
       });
     }
-    return date.toLocaleDateString("en-US", {
+    return date.toLocaleDateString(dateLocaleTag, {
       timeZone: calendarTimeZone,
       month: "short",
       day: "numeric",
@@ -333,7 +335,7 @@ export function prepareTimeAxis(
   const formatTooltip = (raw: unknown): string => {
     const date = parseChartTimestamp(raw);
     if (!date) return typeof raw === "string" ? raw : "";
-    return date.toLocaleString("en-US", {
+    return date.toLocaleString(dateLocaleTag, {
       ...(calendarTimeZone ? { timeZone: calendarTimeZone } : {}),
       month: "short",
       day: "numeric",

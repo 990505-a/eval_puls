@@ -11,6 +11,7 @@ import { formatIntervalSeconds } from "@/src/utils/dates";
 import { useRowHeightLocalStorage } from "@/src/components/table/data-table-row-height-switch";
 import { ActionExecutionStatus } from "@langfuse/shared";
 import { type Status } from "@/src/components/ui/StatusBadge/StatusBadge";
+import { dateFnsOptions } from "@/src/i18n/date-locale";
 
 const actionExecutionStatusToStatus = {
   [ActionExecutionStatus.COMPLETED]: "completed",
@@ -80,7 +81,7 @@ export const AutomationExecutionsTable: React.FC<
         return (
           <div className="flex flex-col">
             <span className="text-xs">
-              {formatDistanceToNow(date, { addSuffix: true })}
+              {formatDistanceToNow(date, dateFnsOptions({ addSuffix: true }))}
             </span>
             <span className="text-muted-foreground text-xs">
               {date.toLocaleString()}

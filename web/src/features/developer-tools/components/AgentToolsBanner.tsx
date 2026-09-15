@@ -3,6 +3,7 @@ import { DismissController } from "@/src/components/DismissController";
 import { Button } from "@/src/components/ui/button";
 import Link from "next/link";
 import { Bot } from "lucide-react";
+import { useI18n } from "@/src/i18n/provider";
 
 const DOCS_HREF =
   "https://langfuse.com/docs/api-and-data-platform/features/agent-skill";
@@ -13,6 +14,7 @@ const DOCS_HREF =
  * organization overview page.
  */
 export function AgentToolsBanner() {
+  const { t } = useI18n();
   return (
     <DismissController id="agent-tools-banner:v1" family="callouts">
       {({ onDismiss }) => (
@@ -23,7 +25,7 @@ export function AgentToolsBanner() {
             actions={
               <Button asChild size="sm" variant="secondary">
                 <Link href={DOCS_HREF} target="_blank">
-                  Learn more
+                  {t("Learn more")}
                 </Link>
               </Button>
             }
@@ -33,10 +35,11 @@ export function AgentToolsBanner() {
               <Bot className="mt-0.5 h-4 w-4 shrink-0 sm:mt-0" />
               <span>
                 <span className="font-bold">
-                  Langfuse works great with your AI coding agents.
+                  {t("Langfuse works great with your AI coding agents.")}
                 </span>{" "}
-                Connect Claude Code, Codex, and other agents to your data with
-                the Langfuse Agent Skill, MCP server, and CLI.
+                {t(
+                  "Connect Claude Code, Codex, and other agents to your data with the Langfuse Agent Skill, MCP server, and CLI.",
+                )}
               </span>
             </div>
           </Callout>

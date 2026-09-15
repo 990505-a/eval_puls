@@ -35,6 +35,7 @@ import { useMediaQuery } from "react-responsive";
 import useLocalStorage from "@/src/components/useLocalStorage";
 import { cn } from "@/src/utils/tailwind";
 import { compactNumberFormatter } from "@/src/utils/numbers";
+import { useI18n } from "@/src/i18n/provider";
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
 import {
   Check,
@@ -217,6 +218,7 @@ export function DataTableControls({
   const { setOpen, tableName, isMobile } = useDataTableControls();
   const { isLangfuseCloud } = useLangfuseCloudRegion();
   const capture = usePostHogClientCapture();
+  const { t } = useI18n();
   const [aiPopoverOpen, setAiPopoverOpen] = useState(false);
   const activeFilterCount = queryFilter.filters.filter(
     (filter) => filter.isActive,
@@ -526,7 +528,7 @@ export function DataTableControls({
         <CategoricalFacet
           key={filter.column}
           filterKey={filter.column}
-          label={filter.label}
+          label={t(filter.label)}
           tooltip={filter.tooltip}
           help={filter.help}
           summary={getFacetSummary(filter)}
@@ -565,7 +567,7 @@ export function DataTableControls({
         <NumericFacet
           key={`${filter.column}:${filter.value === null ? "conditions" : "range"}`}
           filterKey={filter.column}
-          label={filter.label}
+          label={t(filter.label)}
           tooltip={filter.tooltip}
           help={filter.help}
           summary={getFacetSummary(filter)}
@@ -591,7 +593,7 @@ export function DataTableControls({
         <StringFacet
           key={filter.column}
           filterKey={filter.column}
-          label={filter.label}
+          label={t(filter.label)}
           tooltip={filter.tooltip}
           help={filter.help}
           summary={getFacetSummary(filter)}
@@ -612,7 +614,7 @@ export function DataTableControls({
         <KeyValueFacet
           key={filter.column}
           filterKey={filter.column}
-          label={filter.label}
+          label={t(filter.label)}
           tooltip={filter.tooltip}
           help={filter.help}
           summary={getFacetSummary(filter)}
@@ -637,7 +639,7 @@ export function DataTableControls({
         <NumericKeyValueFacet
           key={filter.column}
           filterKey={filter.column}
-          label={filter.label}
+          label={t(filter.label)}
           tooltip={filter.tooltip}
           help={filter.help}
           summary={getFacetSummary(filter)}
@@ -661,7 +663,7 @@ export function DataTableControls({
         <BooleanKeyValueFacet
           key={filter.column}
           filterKey={filter.column}
-          label={filter.label}
+          label={t(filter.label)}
           tooltip={filter.tooltip}
           help={filter.help}
           summary={getFacetSummary(filter)}
@@ -685,7 +687,7 @@ export function DataTableControls({
         <StringKeyValueFacet
           key={filter.column}
           filterKey={filter.column}
-          label={filter.label}
+          label={t(filter.label)}
           tooltip={filter.tooltip}
           help={filter.help}
           summary={getFacetSummary(filter)}
@@ -807,7 +809,7 @@ export function DataTableControls({
         >
           {visibleFilters.length === 0 && (
             <p className="text-muted-foreground pb-2 text-xs">
-              No active filters.
+              {t("No active filters.")}
             </p>
           )}
           {/* Popover + command list, not a DropdownMenu: the catalog runs to
@@ -827,13 +829,13 @@ export function DataTableControls({
                 disabled={addableFilters.length === 0}
               >
                 <Plus className="mr-1.5 h-3.5 w-3.5" />
-                Add filter
+                {t("Add filter")}
               </Button>
             </PopoverTrigger>
             <PopoverContent align="start" className="w-56 p-0">
               <InputCommand shouldFilter={false}>
                 <InputCommandInput
-                  placeholder="Search filters"
+                  placeholder={t("Search filters")}
                   variant="bottom"
                   value={addFilterSearch}
                   onValueChange={(query) => {
@@ -867,7 +869,7 @@ export function DataTableControls({
                             }}
                             className="cursor-pointer"
                           >
-                            {filter.label}
+                            {t(filter.label)}
                           </InputCommandItem>
                         );
                       })}
@@ -906,7 +908,7 @@ export function DataTableControls({
                 <PanelLeftOpen className="h-3.5 w-3.5" />
               </Button>
             </TooltipTrigger>
-            <TooltipContent side="right">Show filters</TooltipContent>
+            <TooltipContent side="right">{t("Show filters")}</TooltipContent>
           </Tooltip>
         </div>
         {activeFilterCount > 0 && (
@@ -940,7 +942,7 @@ export function DataTableControls({
                 .filter((filter) => filter.isActive)
                 .slice(0, 6)
                 .map((filter) => {
-                  const line = `${filter.label}: ${
+                  const line = `${t(filter.label)}: ${
                     getFacetSummary(filter) ?? "filtered"
                   }`;
                   return (
@@ -982,7 +984,7 @@ export function DataTableControls({
                   setOpen(false);
                   emitSidebarToggled(false, "header");
                 }}
-                aria-label="Close filters"
+                aria-label={t("Close filters")}
                 className="-ml-1 h-6 w-6"
               >
                 <X className="h-4 w-4" />
@@ -997,17 +999,17 @@ export function DataTableControls({
                       setOpen(false);
                       emitSidebarToggled(false, "header");
                     }}
-                    aria-label="Hide filters"
+                    aria-label={t("Hide filters")}
                     className="-ml-1 h-6 w-6"
                   >
                     <PanelLeftClose className="h-3.5 w-3.5" />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>Hide filters</TooltipContent>
+                <TooltipContent>{t("Hide filters")}</TooltipContent>
               </Tooltip>
             )}
             {layout !== "inline" && (
-              <span className="text-sm font-bold">Filters</span>
+              <span className="text-sm font-bold">{t("Filters")}</span>
             )}
             {/* Inline: the count already shows on the sheet's Filters trigger
                 and footer, so a bare number here (title hidden) is just noise. */}
@@ -1028,7 +1030,7 @@ export function DataTableControls({
                       </Button>
                     </PopoverTrigger>
                   </TooltipTrigger>
-                  <TooltipContent>Filter with AI</TooltipContent>
+                  <TooltipContent>{t("Filter with AI")}</TooltipContent>
                 </Tooltip>
                 <PopoverContent align="center" className="w-[400px]">
                   <DataTableAIFilters
@@ -1072,8 +1074,8 @@ export function DataTableControls({
                   }}
                   aria-label={
                     expandedVisibleCount === 0
-                      ? "Expand all filters"
-                      : "Collapse all filters"
+                      ? t("Expand all filters")
+                      : t("Collapse all filters")
                   }
                 >
                   {expandedVisibleCount === 0 ? (
@@ -1085,8 +1087,8 @@ export function DataTableControls({
               </TooltipTrigger>
               <TooltipContent>
                 {expandedVisibleCount === 0
-                  ? "Expand all filters"
-                  : "Collapse all filters"}
+                  ? t("Expand all filters")
+                  : t("Collapse all filters")}
               </TooltipContent>
             </Tooltip>
             <DropdownMenu>
@@ -1103,7 +1105,7 @@ export function DataTableControls({
                     </Button>
                   </DropdownMenuTrigger>
                 </TooltipTrigger>
-                <TooltipContent>Filter options</TooltipContent>
+                <TooltipContent>{t("Filter options")}</TooltipContent>
               </Tooltip>
               <DropdownMenuContent align="end" className="w-48">
                 <DropdownMenuItem
@@ -1120,7 +1122,7 @@ export function DataTableControls({
                   }}
                   className="cursor-pointer"
                 >
-                  Clear all filters
+                  {t("Clear all filters")}
                 </DropdownMenuItem>
                 {/* Plain item with a TRAILING check instead of
                     DropdownMenuCheckboxItem: its reserved leading indicator
@@ -1145,7 +1147,7 @@ export function DataTableControls({
                     });
                   }}
                 >
-                  Show only active
+                  {t("Show only active")}
                   {showOnlyActive && <Check className="ml-auto h-3.5 w-3.5" />}
                 </DropdownMenuItem>
                 {/* "Collapse sidebar" is desktop-rail chrome — there's no rail
@@ -1162,7 +1164,7 @@ export function DataTableControls({
                       }}
                       className="cursor-pointer"
                     >
-                      Collapse sidebar
+                      {t("Collapse sidebar")}
                     </DropdownMenuItem>
                   </>
                 )}
@@ -1740,6 +1742,7 @@ function CategoricalSelectContent({
   | "operator"
   | "onOperatorChange"
 >) {
+  const { t } = useI18n();
   // "Show more values" reveals the next PORTION (it does what it says — not
   // expand-everything: value lists can run to 1000+ user IDs); "Show fewer
   // values" collapses back to the cap. Resets by unmounting on collapse.
@@ -1940,7 +1943,12 @@ function CategoricalSelectContent({
               to learn how to add sessions to your {tableName}.
             </span>
           ) : filterKey === "name" ? (
-            <span>No {tableName} names found in the given time range.</span>
+            <span>
+              {t("No {table} names found in the given time range.").replace(
+                "{table}",
+                ENVIRONMENT_TABLE_LABELS[tableName] ?? tableName,
+              )}
+            </span>
           ) : filterKey === "tags" ? (
             <span>
               Tags let you filter {tableName} according to custom categories
@@ -1956,7 +1964,7 @@ function CategoricalSelectContent({
               to learn how to add tags to your {tableName}.
             </span>
           ) : (
-            "No options found"
+            t("No options found")
           )}
         </div>
       ) : (
@@ -1967,7 +1975,7 @@ function CategoricalSelectContent({
               <div className="relative">
                 <Search className="text-muted-foreground absolute top-1/2 left-2 h-3.5 w-3.5 -translate-y-1/2" />
                 <Input
-                  placeholder="Filter values"
+                  placeholder={t("Filter values")}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="h-8 pl-7 text-xs"
@@ -2008,7 +2016,7 @@ function CategoricalSelectContent({
                       className="mt-1 h-auto w-full justify-start py-1 pl-7 text-xs"
                     >
                       <ChevronUp className="mr-1 h-3 w-3" />
-                      Show fewer values
+                      {t("Show fewer values")}
                     </Button>
                   )}
                   {canShowMore && (
@@ -2023,7 +2031,7 @@ function CategoricalSelectContent({
                       className="mt-0.5 h-auto w-full justify-start py-1 pl-7 text-xs"
                     >
                       <ChevronDown className="mr-1 h-3 w-3" />
-                      Show more values
+                      {t("Show more values")}
                     </Button>
                   )}
                 </div>
@@ -2040,9 +2048,12 @@ function CategoricalSelectContent({
                 rel="noopener noreferrer"
                 className="hover:text-foreground underline"
               >
-                See docs
+                {t("See docs")}
               </a>{" "}
-              on how to add environments to your {tableName}.
+              {t("on how to add environments to your {table}.").replace(
+                "{table}",
+                ENVIRONMENT_TABLE_LABELS[tableName] ?? tableName,
+              )}
             </div>
           ) : null}
         </>
@@ -2050,6 +2061,14 @@ function CategoricalSelectContent({
     </div>
   );
 }
+
+// 环境筛选提示里用到的表名（tableName 传的是英文枚举值）
+const ENVIRONMENT_TABLE_LABELS: Record<string, string> = {
+  traces: "链路",
+  sessions: "会话",
+  observations: "观测记录",
+  scores: "评分",
+};
 
 function NumericFacet({
   label,
@@ -2268,6 +2287,7 @@ function StringFacet({
   disabledReason,
   onReset,
 }: StringFacetProps) {
+  const { t } = useI18n();
   const [localValue, setLocalValue] = useState<string>(value);
   // Same render-time adoption as NumericFacet above (no mirror effect).
   const [lastValue, setLastValue] = useState<string>(value);
@@ -2320,13 +2340,13 @@ function StringFacet({
     >
       <div className="px-4">
         {loading ? (
-          <div className="text-muted-foreground text-sm">Loading...</div>
+          <div className="text-muted-foreground text-sm">{t("Loading...")}</div>
         ) : (
           <Input
             type="text"
             id={`string-${filterKey}`}
             value={localValue}
-            placeholder="Search"
+            placeholder={t("Search")}
             onChange={handleInputChange}
             className="h-8"
           />

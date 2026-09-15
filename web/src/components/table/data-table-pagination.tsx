@@ -24,6 +24,7 @@ import {
   TooltipTrigger,
 } from "@/src/components/ui/tooltip";
 import { compactNumberFormatter } from "@/src/utils/numbers";
+import { useI18n } from "@/src/i18n/provider";
 import { useEffect, useState } from "react";
 
 interface DataTablePaginationProps<TData> {
@@ -54,6 +55,7 @@ export function DataTablePagination<TData>({
 }: DataTablePaginationProps<TData>) {
   const capture = usePostHogClientCapture();
 
+  const { t } = useI18n();
   // Last page shows the exact loaded-row total; multi-page shows "Total ≈ X".
   const totalFooterEnabled =
     approxTotalCount !== undefined || isApproxTotalCountLoading;
@@ -123,14 +125,14 @@ export function DataTablePagination<TData>({
         {showExactTotal ? (
           // Result fits on the loaded page(s) — the total is exact, no estimate.
           <span className={totalCountClassName}>
-            Total&nbsp;{compactNumberFormatter(exactTotal)}
+            {t("Total")}&nbsp;{compactNumberFormatter(exactTotal)}
           </span>
         ) : showApproxTotal ? (
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
                 <span className={totalCountClassName}>
-                  Total&nbsp;≈&nbsp;
+                  {t("Total")}&nbsp;≈&nbsp;
                   {approxTotalCount != null ? (
                     compactNumberFormatter(approxTotalCount)
                   ) : (
@@ -168,10 +170,10 @@ export function DataTablePagination<TData>({
         ) : null}
         <div className="flex shrink-0 items-center gap-2">
           <p className="text-sm font-bold whitespace-nowrap @min-[440px]/pagination:hidden">
-            Rows
+            {t("Rows")}
           </p>
           <p className="hidden text-sm font-bold whitespace-nowrap @min-[440px]/pagination:block">
-            Rows per page
+            {t("Rows per page")}
           </p>
           <Select
             value={`${table.getState().pagination.pageSize}`}
@@ -198,7 +200,7 @@ export function DataTablePagination<TData>({
           <div className="flex items-center justify-center gap-1 text-sm font-bold whitespace-nowrap">
             {table.getPageCount() !== -1 ? (
               <>
-                Page
+                {t("Page")}
                 {canJumpPages && (
                   <Input
                     type="number"
@@ -226,15 +228,17 @@ export function DataTablePagination<TData>({
                 {!canJumpPages && <span>{currentPage}</span>}
               </>
             ) : (
-              `Page ${currentPage}`
+              `${t("Page")} ${currentPage}`
             )}
             {!hideTotalCount && (
               <>
                 {pageCount !== -1 ? (
-                  <span>of {pageCount}</span>
+                  <span>
+                    {t("of")} {pageCount}
+                  </span>
                 ) : (
                   <span>
-                    of{" "}
+                    {t("of")}{" "}
                     {isLoading ? (
                       <span className="ml-1 inline-flex align-middle">
                         <Spinner size="xxs" variant="muted" display="inline" />
@@ -247,7 +251,6 @@ export function DataTablePagination<TData>({
               </>
             )}
           </div>
-
           <div className="flex items-center gap-2">
             {canJumpPages && (
               <Button

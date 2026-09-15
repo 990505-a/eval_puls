@@ -48,6 +48,7 @@ import {
 import { MultiSelect as MultiSelectFilter } from "@/src/features/filters/components/multi-select";
 import { DataTableRefreshButton } from "@/src/components/table/data-table-refresh-button";
 import { type RefreshInterval } from "@/src/components/table/utils/refresh-intervals";
+import { useI18n } from "@/src/i18n/provider";
 import {
   getSearchButtonLabel,
   getSearchMode,
@@ -264,6 +265,7 @@ export function DataTableToolbar<TData, TValue>({
   );
 
   const capture = usePostHogClientCapture();
+  const { t } = useI18n();
   // One definition of the two analytics dimensions for everything the toolbar
   // emits: an explicit `tableName` wins over the view's, and `isV4`
   // falls back to the one surface that is v4 without saying so — the v4 events
@@ -342,7 +344,7 @@ export function DataTableToolbar<TData, TValue>({
               autoFocus
               placeholder={
                 searchConfig.tableAllowsFullTextSearch
-                  ? "Search..."
+                  ? t("Search...")
                   : `Search (${searchConfig.metadataSearchFields?.join(", ")})`
               }
               value={searchString}

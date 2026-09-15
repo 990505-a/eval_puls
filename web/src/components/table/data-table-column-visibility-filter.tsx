@@ -42,6 +42,7 @@ import {
 } from "@/src/components/ui/collapsible";
 import { Checkbox } from "@/src/components/design-system/Checkbox/Checkbox";
 import { Separator } from "@/src/components/ui/separator";
+import { useI18n } from "@/src/i18n/provider";
 
 /**
  * A whole column GROUP was shown or hidden at once (its "Select All" /
@@ -141,6 +142,7 @@ function ColumnVisibilityListItem<TData, TValue>({
   columnVisibility: VisibilityState;
   isOrderable?: boolean;
 }) {
+  const { t } = useI18n();
   const isFixedPosition = column.isFixedPosition ?? false;
   const { attributes, isDragging, listeners, setNodeRef, transform } =
     useSortable({
@@ -185,9 +187,9 @@ function ColumnVisibilityListItem<TData, TValue>({
           )}
           title={
             !column.enableHiding
-              ? "This column may not be hidden"
+              ? t("This column may not be hidden")
               : isFixedPosition
-                ? "This column is fixed in position and cannot be hidden"
+                ? t("This column is fixed in position and cannot be hidden")
                 : undefined
           }
         >
@@ -207,7 +209,7 @@ function ColumnVisibilityListItem<TData, TValue>({
           {...listeners}
           variant="ghost"
           size="xs"
-          title="Drag and drop to reorder columns"
+          title={t("Drag and drop to reorder columns")}
           className="invisible shrink-0 group-focus-within:visible group-hover:visible"
         >
           <Menu className="h-3 w-3" />
@@ -234,6 +236,7 @@ function GroupVisibilityHeader<TData, TValue>({
   children: React.ReactNode;
   toggleAll: () => void;
 }) {
+  const { t } = useI18n();
   const { attributes, isDragging, listeners, setNodeRef, transform } =
     useSortable({
       id: column.accessorKey,
@@ -286,8 +289,8 @@ function GroupVisibilityHeader<TData, TValue>({
             onClick={toggleAll}
           >
             {groupVisibleCount === groupTotalCount
-              ? "Deselect All"
-              : "Select All"}
+              ? t("Deselect All")
+              : t("Select All")}
           </Button>
           {attributes && listeners && (
             <Button
@@ -295,7 +298,7 @@ function GroupVisibilityHeader<TData, TValue>({
               {...listeners}
               variant="ghost"
               size="xs"
-              title="Drag and drop to reorder columns"
+              title={t("Drag and drop to reorder columns")}
               className="invisible group-focus-within:visible group-hover:visible"
             >
               <Menu className="h-3 w-3" />
@@ -349,6 +352,7 @@ export function DataTableColumnVisibilityFilter<TData, TValue>({
   onColumnGroupToggle,
 }: ColumnVisibilityProps<TData, TValue>) {
   const capture = usePostHogClientCapture();
+  const { t } = useI18n();
   const [openGroups, setOpenGroups] = React.useState<Record<string, boolean>>(
     {},
   );
@@ -487,8 +491,8 @@ export function DataTableColumnVisibilityFilter<TData, TValue>({
               >
                 <span>
                   {count === total
-                    ? "Deselect All Columns"
-                    : "Select All Columns"}
+                    ? t("Deselect All Columns")
+                    : t("Select All Columns")}
                 </span>
                 <span className="text-muted-foreground text-xs">{`${count}/${total}`}</span>
               </Button>
@@ -584,9 +588,9 @@ export function DataTableColumnVisibilityFilter<TData, TValue>({
           <Button
             variant="outline"
             size={triggerSize}
-            title="Show/hide columns"
+            title={t("Show/hide columns")}
           >
-            <span>Columns</span>
+            <span>{t("Columns")}</span>
             <div className="bg-input ml-1 rounded-sm px-1 text-xs">{`${count}/${total}`}</div>
           </Button>
         </Trigger>

@@ -20,6 +20,7 @@ import Link from "next/link";
 import { Badge } from "@/src/components/ui/badge";
 import { OrganizationDropdownMenu } from "@/src/components/OrganizationDropdownMenu/OrganizationDropdownMenu";
 import { ProjectDropdownMenu } from "@/src/components/ProjectDropdownMenu/ProjectDropdownMenu";
+import { useI18n } from "@/src/i18n/provider";
 
 const BreadcrumbComponent = ({
   items,
@@ -29,6 +30,7 @@ const BreadcrumbComponent = ({
   className?: string;
 }) => {
   const session = useSession();
+  const { t } = useI18n();
   const { organization, project } = useQueryProjectOrOrganization();
   const { getProjectPath, getOrgPath } = useOrgProjectSwitchPaths();
 
@@ -111,10 +113,10 @@ const BreadcrumbComponent = ({
             <BreadcrumbItem key={index}>
               {item.href ? (
                 <BreadcrumbLink asChild>
-                  <Link href={item.href}>{item.name}</Link>
+                  <Link href={item.href}>{t(item.name)}</Link>
                 </BreadcrumbLink>
               ) : (
-                <span>{item.name}</span>
+                <span>{t(item.name)}</span>
               )}
             </BreadcrumbItem>
           </Fragment>

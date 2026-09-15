@@ -13,6 +13,7 @@ import {
 import { AlertTriangle, ExternalLinkIcon, RefreshCcw } from "lucide-react";
 import Link from "next/link";
 import { Fragment } from "react";
+import { dateFnsOptions } from "@/src/i18n/date-locale";
 
 type EvaluatorPausedCalloutProps = {
   projectId: string;
@@ -84,7 +85,7 @@ export function EvaluatorPausedCallout({
   const blockedAtDate = new Date(blockedAt);
   const blockedAtLabel = Number.isNaN(blockedAtDate.getTime())
     ? null
-    : formatDistanceToNow(blockedAtDate, { addSuffix: true });
+    : formatDistanceToNow(blockedAtDate, dateFnsOptions({ addSuffix: true }));
 
   return (
     <section

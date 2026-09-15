@@ -1,5 +1,6 @@
 import { DropdownMenu } from "@/src/components/design-system/DropdownMenu/DropdownMenu";
 import { createProjectRoute } from "@/src/features/setup/setupRoutes";
+import { useI18n } from "@/src/i18n/provider";
 import { PlusIcon, Settings } from "lucide-react";
 import { type Session } from "next-auth";
 import { type ComponentProps, useMemo } from "react";
@@ -22,6 +23,7 @@ type ProjectDropdownMenuProps = {
 );
 
 export function ProjectDropdownMenu(props: ProjectDropdownMenuProps) {
+  const { t } = useI18n();
   const { children, organizationId, canCreateProjects, getProjectPath } = props;
   const projects = props.state === "loaded" ? props.projects : null;
 
@@ -49,7 +51,7 @@ export function ProjectDropdownMenu(props: ProjectDropdownMenuProps) {
             {
               type: "item" as const,
               id: "create",
-              title: "New Project",
+              title: t("New Project"),
               href: createProjectRoute(organizationId),
               icon: PlusIcon,
             },
@@ -60,7 +62,7 @@ export function ProjectDropdownMenu(props: ProjectDropdownMenuProps) {
   );
 
   return (
-    <DropdownMenu title="Projects" items={items}>
+    <DropdownMenu title={t("Projects")} items={items}>
       {children}
     </DropdownMenu>
   );

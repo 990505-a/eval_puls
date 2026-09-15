@@ -17,6 +17,7 @@ import {
   TooltipTrigger,
 } from "@/src/components/ui/tooltip";
 import { MoreHorizontal } from "lucide-react";
+import { useI18n } from "@/src/i18n/provider";
 
 /**
  * The page-specific block for the minimal-chrome mobile shell. Rendered between
@@ -35,6 +36,7 @@ export const MobilePageTitle = ({
 }: {
   headerProps: Omit<PageHeaderProps, "container">;
 }) => {
+  const { t } = useI18n();
   const {
     title,
     titleContent,
@@ -78,7 +80,7 @@ export const MobilePageTitle = ({
             pushing the ⋯ flush against the edge or crushing the icon. Full value
             stays in the title attribute (and the ⋯ menu's Copy row). */}
         <h1
-          title={title}
+          title={t(title)}
           className="text-primary min-w-0 truncate text-base leading-tight font-bold"
         >
           {titleContent ? (
@@ -87,15 +89,15 @@ export const MobilePageTitle = ({
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <span className="cursor-help">{title}</span>
+                  <span className="cursor-help">{t(title)}</span>
                 </TooltipTrigger>
                 <TooltipContent side="bottom" className="max-w-xs">
-                  {titleTooltip}
+                  {t(titleTooltip)}
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
           ) : (
-            <span title={title}>{title}</span>
+            <span title={t(title)}>{t(title)}</span>
           )}
         </h1>
         {/* Help lives OUTSIDE the truncating h1 (like titleBadges): kept inside,
@@ -105,7 +107,11 @@ export const MobilePageTitle = ({
         {help && (
           <span className="shrink-0 align-middle whitespace-nowrap">
             <DocPopup
-              description={help.description}
+              description={
+                typeof help.description === "string"
+                  ? t(help.description)
+                  : help.description
+              }
               href={help.href}
               className={help.className}
             />
@@ -127,7 +133,7 @@ export const MobilePageTitle = ({
               <Button
                 variant="outline"
                 size="icon"
-                aria-label="More actions"
+                aria-label={t("More actions")}
                 className="ml-auto shrink-0"
               >
                 <MoreHorizontal className="h-4 w-4" />

@@ -26,6 +26,7 @@ import {
   APP_SHELL_CHROME_ROW_CLASS,
   APP_SHELL_CHROME_ROW_TEST_ID,
 } from "@/src/components/layouts/app-shell-chrome";
+import { useI18n } from "@/src/i18n/provider";
 
 const containerLayoutClassName =
   "lg:mx-auto lg:w-full lg:max-w-screen-lg lg:px-8 xl:max-w-screen-xl 2xl:max-w-[1400px]";
@@ -79,6 +80,8 @@ const PageHeader = ({
   const hasAppSidebar = useHasAppSidebar();
   const envLabel = useEnvLabel();
   const isInAppAgentLauncherVisible = useIsInAppAgentLauncherVisible();
+  const { t } = useI18n();
+  const translatedTitle = t(title);
   // The sidebar trigger + brand mark only make sense where a real AppSidebar
   // exists to toggle/mirror. On the sidebar-less MinimalLayout (public/shared
   // trace and session views) show the page's own leadingControl instead — no
@@ -185,28 +188,32 @@ const PageHeader = ({
                               className="cursor-help wrap-break-word"
                               data-testid="page-header-title"
                             >
-                              {title}
+                              {translatedTitle}
                             </span>
                           </TooltipTrigger>
                           <TooltipContent side="bottom" className="max-w-xs">
-                            {titleTooltip}
+                            {t(titleTooltip)}
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
                     ) : (
                       <span
                         className="wrap-break-word"
-                        title={title}
+                        title={translatedTitle}
                         data-testid="page-header-title"
                       >
-                        {title}
+                        {translatedTitle}
                       </span>
                     )}
                     {help && (
                       <span className="whitespace-nowrap">
                         &nbsp;
                         <DocPopup
-                          description={help.description}
+                          description={
+                            typeof help.description === "string"
+                              ? t(help.description)
+                              : help.description
+                          }
                           href={help.href}
                           className={help.className}
                         />

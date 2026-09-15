@@ -14,6 +14,7 @@ import { NewDatasetItemForm } from "@/src/features/datasets/components/NewDatase
 import { useHasProjectAccess } from "@/src/features/rbac/utils/checkProjectAccess";
 import { usePostHogClientCapture } from "@/src/features/posthog-analytics/usePostHogClientCapture";
 import { cn } from "@/src/utils/tailwind";
+import { useI18n } from "@/src/i18n/provider";
 
 interface DatasetItemEntryPointRowProps {
   icon: React.ReactNode;
@@ -30,6 +31,7 @@ const DatasetItemEntryPointRow = ({
   onClick,
   hasAccess = true,
 }: DatasetItemEntryPointRowProps) => {
+  const { t } = useI18n();
   const disabled = !hasAccess;
   return (
     <div
@@ -55,7 +57,9 @@ const DatasetItemEntryPointRow = ({
       }
       title={
         !hasAccess
-          ? "You don't have access to this feature, please contact your administrator"
+          ? t(
+              "You don't have access to this feature, please contact your administrator",
+            )
           : undefined
       }
     >
@@ -84,6 +88,8 @@ export const DatasetItemsOnboarding = ({
     scope: "datasets:CUD",
   });
 
+  const { t } = useI18n();
+
   return (
     <SplashScreen
       title="Add items to your dataset"
@@ -99,8 +105,8 @@ export const DatasetItemsOnboarding = ({
           <DialogTrigger asChild disabled={!hasProjectAccess}>
             <DatasetItemEntryPointRow
               icon={<Upload className="h-5 w-5" />}
-              title="Upload CSV"
-              description="Import dataset items from a CSV file"
+              title={t("Upload CSV")}
+              description={t("Import dataset items from a CSV file")}
               onClick={() => {
                 if (hasProjectAccess) {
                   capture("dataset_item:upload_csv_button_click");
@@ -118,8 +124,8 @@ export const DatasetItemsOnboarding = ({
           <DialogTrigger asChild disabled={!hasProjectAccess}>
             <DatasetItemEntryPointRow
               icon={<Braces className="h-5 w-5" />}
-              title="Add Manually"
-              description="Manually input a single item"
+              title={t("Add Manually")}
+              description={t("Manually input a single item")}
               onClick={() => {
                 if (hasProjectAccess) {
                   capture("dataset_item:new_form_open");
@@ -130,7 +136,7 @@ export const DatasetItemsOnboarding = ({
           </DialogTrigger>
           <DialogContent size="lg">
             <DialogHeader>
-              <DialogTitle>Create dataset item</DialogTitle>
+              <DialogTitle>{t("Create dataset item")}</DialogTitle>
             </DialogHeader>
             <NewDatasetItemForm
               projectId={projectId}
@@ -147,16 +153,18 @@ export const DatasetItemsOnboarding = ({
         >
           <DatasetItemEntryPointRow
             icon={<Code className="h-5 w-5" />}
-            title="Add via Code"
-            description="Use our Python/TS/JS SDKs or custom API"
+            title={t("Add via Code")}
+            description={t("Use our Python/TS/JS SDKs or custom API")}
           />
         </Link>
 
         <Link href={`/project/${projectId}/observations`}>
           <DatasetItemEntryPointRow
             icon={<ListTree className="h-5 w-5" />}
-            title="Select Observations"
-            description="Select observations in the observations table and use a batch action to add them to your dataset"
+            title={t("Select Observations")}
+            description={t(
+                "Select observations in the observations table and use a batch action to add them to your dataset",
+              )}
             onClick={() => {
               capture("dataset_item:select_observations_button_click");
             }}

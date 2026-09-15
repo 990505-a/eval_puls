@@ -14,6 +14,7 @@ import { createNumberTableColumn } from "@/src/components/design-system/table/co
 import { createStatusTableColumn } from "@/src/components/design-system/table/columns/createStatusTableColumn";
 import { createTextTableColumn } from "@/src/components/design-system/table/columns/createTextTableColumn";
 import { costFormatter } from "@/src/utils/numbers";
+import { dateFnsOptions } from "@/src/i18n/date-locale";
 
 interface SpendAlertsTableProps {
   orgId: string;
@@ -95,9 +96,10 @@ export function SpendAlertsTable({ orgId }: SpendAlertsTableProps) {
       size: 160,
       cell: ({ row }) =>
         row.original.triggeredAt
-          ? formatDistanceToNow(new Date(row.original.triggeredAt), {
-              addSuffix: true,
-            })
+          ? formatDistanceToNow(
+              new Date(row.original.triggeredAt),
+              dateFnsOptions({ addSuffix: true }),
+            )
           : "Never",
     },
     createDropdownTableColumn<AlertRow, string>({

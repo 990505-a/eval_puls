@@ -3,6 +3,7 @@ import { cn } from "@/src/utils/tailwind";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { type ParsedUrlQuery } from "querystring";
+import { useI18n } from "@/src/i18n/provider";
 
 type TabDefinition = {
   value: string;
@@ -37,6 +38,7 @@ export const PageTabs = ({
   scrollable = false,
 }: PageTabsProps) => {
   const router = useRouter();
+  const { t } = useI18n();
   return (
     <div className={cn(scrollable && "-mx-1 overflow-x-auto px-1", className)}>
       <div
@@ -66,7 +68,7 @@ export const PageTabs = ({
                 className={tabClassName}
                 onClick={tab.onClick}
               >
-                {tab.label}
+                {t(tab.label)}
               </Link>
             );
           }
@@ -80,7 +82,7 @@ export const PageTabs = ({
                 className={tabClassName}
                 disabled={tab.disabled}
               >
-                {tab.label}
+                {t(tab.label)}
               </button>
             );
           }

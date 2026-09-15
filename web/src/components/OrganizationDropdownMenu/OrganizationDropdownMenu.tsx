@@ -4,6 +4,7 @@ import { type Session } from "next-auth";
 import { type ComponentProps, useMemo } from "react";
 import { env } from "@/src/env.mjs";
 import { createOrganizationRoute } from "@/src/features/setup/setupRoutes";
+import { useI18n } from "@/src/i18n/provider";
 
 type Organization = NonNullable<Session["user"]>["organizations"][number];
 
@@ -20,6 +21,7 @@ type OrganizationDropdownMenuProps = {
 );
 
 export function OrganizationDropdownMenu(props: OrganizationDropdownMenuProps) {
+  const { t } = useI18n();
   const { canCreateOrganizations, children, getOrgPath } = props;
   const organizations = props.state === "loaded" ? props.organizations : null;
 
@@ -57,7 +59,7 @@ export function OrganizationDropdownMenu(props: OrganizationDropdownMenuProps) {
             {
               type: "item" as const,
               id: "create",
-              title: "New Organization",
+              title: t("New Organization"),
               href: createOrganizationRoute,
               icon: PlusIcon,
             },
@@ -68,7 +70,7 @@ export function OrganizationDropdownMenu(props: OrganizationDropdownMenuProps) {
   );
 
   return (
-    <DropdownMenu title="Organizations" items={items}>
+    <DropdownMenu title={t("Organizations")} items={items}>
       {children}
     </DropdownMenu>
   );

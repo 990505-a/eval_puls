@@ -1,3 +1,9 @@
+# eval_puls build knob: which released Langfuse image to take the golang-migrate
+# ClickHouse CLI from. Declared as a global ARG so it can be used in a FROM line.
+# langfuse/langfuse:3 is usually already present locally, which keeps the build
+# from pulling another ~1.7 GB image.
+ARG MIGRATE_SOURCE_IMAGE=langfuse/langfuse:3
+
 # The node alpine image is available here: https://github.com/nodejs/docker-node
 FROM --platform=${TARGETPLATFORM:-linux/amd64} node:24-alpine AS alpine
 
@@ -23,19 +29,14 @@ RUN rm -rf /usr/local/lib/node_modules/corepack \
             /root/.cache/node/corepack && \
     rm -f /usr/local/bin/corepack /usr/local/bin/yarn /usr/local/bin/yarnpkg
 
-FROM --platform=${BUILDPLATFORM} golang:1.26 AS migrate-builder
-ARG TARGETOS
-ARG TARGETARCH
-ENV CGO_ENABLED=0 \
-    GOBIN=/out \
-    GOOS=${TARGETOS} \
-    GOARCH=${TARGETARCH}
-# Build only the ClickHouse migrate CLI Langfuse uses at runtime.
-# compile this ourselves instead of downloading the upstream release
-# because prebuilt bins bundle many unused drivers and thus inherit CVEs
-# eg.: https://github.com/golang-migrate/migrate/issues/1357
-RUN /usr/local/go/bin/go install -trimpath -tags 'clickhouse' -ldflags='-s -w' \
-    github.com/golang-migrate/migrate/v4/cmd/migrate@v4.19.1
+# eval_puls: reuse the ClickHouse migrate CLI straight from a released Langfuse
+# image instead of compiling it from golang:1.26 here. This drops the golang base
+# image and its cross-border module fetch entirely (the main cause of stalled
+# builds behind the GFW). The binary is version-agnostic golang-migrate; the
+# migration files themselves still come from this repo's source tree.
+# Override with --build-arg MIGRATE_SOURCE_IMAGE=langfuse/langfuse:4 if you want
+# the CLI that ships with the matching v4 release.
+FROM --platform=${TARGETPLATFORM:-linux/amd64} ${MIGRATE_SOURCE_IMAGE} AS migrate-source
 
 FROM --platform=${TARGETPLATFORM:-linux/amd64} build-base AS pruner
 
@@ -48,12 +49,33 @@ FROM --platform=${TARGETPLATFORM:-linux/amd64} build-base AS builder
 
 WORKDIR /app
 
+# eval_puls: npm registry override (e.g. --build-arg NPM_REGISTRY=https://registry.npmmirror.com
+# for builds behind the GFW).
+ARG NPM_REGISTRY=https://registry.npmjs.org
+
 # First install the dependencies (as they change less often)
 COPY --from=pruner /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 COPY --from=pruner /app/out/pnpm-workspace.yaml ./pnpm-workspace.yaml
 COPY --from=pruner /app/out/json/ .
 
-RUN pnpm install --frozen-lockfile
+# eval_puls: persistent pnpm store cache mount survives failed/retried builds;
+# generous fetch timeout because cross-border registries can stall.
+# Prisma engines / sentry-cli postinstalls download binaries from their own
+# CDNs — point them at China mirrors so they don't stall without a proxy.
+#
+# NOTE pnpm 12 changed the CLI: `--fetch-retries` no longer exists as a flag
+# (it silently turns the command into `pnpm add`, which then rejects
+# --frozen-lockfile with a confusing error). Retries are set as config below,
+# and every remaining flag uses the `=` form so a value can never be parsed as
+# a package name.
+RUN --mount=type=cache,target=/pnpm/store \
+    pnpm config set registry ${NPM_REGISTRY} && \
+    pnpm config set fetch-retries 5 && \
+    PRISMA_ENGINES_MIRROR=https://registry.npmmirror.com/-/binary/prisma \
+    SENTRYCLI_CDNURL=https://registry.npmmirror.com/-/binary/sentry-cli \
+    pnpm install --frozen-lockfile \
+      --store-dir=/pnpm/store \
+      --fetch-timeout=300000
 
 # pnpm can verify dependencies before each `pnpm run`, so every command
 # spawned by turbo re-checks node_modules via file mtimes. Cached install
@@ -172,7 +194,10 @@ ARG GID=1001
 RUN addgroup --system --gid ${GID} nodejs
 RUN adduser --system --uid ${UID} nextjs
 
-RUN npm install -g --no-package-lock --no-save prisma@6.19.3
+# eval_puls: npm registry override for the runtime global install below.
+ARG NPM_REGISTRY=https://registry.npmjs.org
+RUN npm config set registry ${NPM_REGISTRY} && \
+    npm install -g --no-package-lock --no-save prisma@6.19.3
 
 # Install dd-trace only if NEXT_PUBLIC_LANGFUSE_CLOUD_REGION is configured
 ARG NEXT_PUBLIC_LANGFUSE_CLOUD_REGION
@@ -184,7 +209,7 @@ RUN if [ -n "$NEXT_PUBLIC_LANGFUSE_CLOUD_REGION" ]; then \
 RUN rm -rf /usr/local/lib/node_modules/npm && \
     rm -f /usr/local/bin/npm /usr/local/bin/npx
 
-COPY --from=migrate-builder /out/migrate /usr/bin/migrate
+COPY --from=migrate-source /usr/bin/migrate /usr/bin/migrate
 
 COPY --from=builder --chown=nextjs:nodejs /app/web/next.config.mjs .
 COPY --from=builder --chown=nextjs:nodejs /app/web/package.json .

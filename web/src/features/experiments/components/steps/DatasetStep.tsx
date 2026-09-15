@@ -40,6 +40,7 @@ import { type DatasetStepProps } from "@/src/features/experiments/types/stepProp
 import { StepHeader } from "@/src/features/experiments/components/shared/StepHeader";
 import { api } from "@/src/utils/api";
 import { format } from "date-fns";
+import { dateFnsOptions } from "@/src/i18n/date-locale";
 
 export const DatasetStep: React.FC<DatasetStepProps> = ({
   projectId,
@@ -210,7 +211,7 @@ export const DatasetStep: React.FC<DatasetStepProps> = ({
                       key={version.toISOString()}
                       value={version.toISOString()}
                     >
-                      {format(version, "MMM d, yyyy 'at' h:mm a")} (UTC)
+                      {format(version, "MMM d, yyyy 'at' h:mm a", dateFnsOptions())} (UTC)
                     </SelectItem>
                   ))}
                 </SelectContent>

@@ -172,6 +172,15 @@ const nextConfig = {
    *
    * @see https://github.com/vercel/next.js/issues/41980
    */
+  // eval_puls 汉化版注意：这是 Next 内置 i18n 的"路由语言"清单，**不是**我们的界面翻译
+  // （界面翻译在 src/i18n/）。它只影响两件事：
+  //   1) 路由前缀 —— 单一 locale 且为 defaultLocale，因此不产生前缀，URL 不变；
+  //   2) Next 路由器在每次路由切换完成时会执行 `document.documentElement.lang = locale`。
+  // 第 2 点会与汉化版冲突：它会把语言标记写成 "en"。
+  // **试过**把这里改成 "zh-CN" 来一劳永逸，但 Next 会因此额外生成一整套 /zh-CN/... 路由
+  // （实测这些路径返回 200 且能渲染应用），凭空多出一份重复的 URL 空间 —— 不划算，故保持上游原样。
+  // 现在的分工：服务端首屏的 lang 由 src/pages/_document.tsx 给出（zh-CN），
+  // 客户端每次路由切换后由 I18nProvider 里的 MutationObserver 守卫纠回正确值。
   i18n: {
     locales: ["en"],
     defaultLocale: "en",

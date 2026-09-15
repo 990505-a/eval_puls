@@ -13,9 +13,12 @@ export default function Document() {
     // lang is set explicitly (not left to the i18n config, which is being
     // phased out in App Router) so screen readers always get the document
     // language — WCAG 2.1 SC 3.1.1.
+    // eval_puls: 汉化版默认中文，服务端渲染出来的首屏就该是 zh-CN，
+    // 否则首屏会被浏览器当成英文页面（可能触发"是否翻译此页"提示）。
+    // 英文偏好由 I18nProvider 挂载后改写。
     // next-themes mutates class/style on <html> before hydration; suppress the
     // expected mismatch one level deep (React 19 logs it and can re-render).
-    <Html lang="en" suppressHydrationWarning>
+    <Html lang="zh-CN" suppressHydrationWarning>
       <Head />
       <body>
         <Main />

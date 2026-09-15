@@ -12,6 +12,7 @@ import {
   PopoverTrigger,
 } from "@/src/components/ui/popover";
 import { cn } from "@/src/utils/tailwind";
+import { useI18n } from "@/src/i18n/provider";
 import { type DateRange as RDPDateRange } from "react-day-picker";
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { setBeginningOfDay, setEndOfDay } from "@/src/utils/dates";
@@ -26,6 +27,7 @@ import {
   type TimeRange,
 } from "@/src/utils/date-range-utils";
 import { combineDateAndTime } from "@/src/components/ui/time-picker-utils";
+import { dateFnsOptions } from "@/src/i18n/date-locale";
 
 export function DatePicker({
   date,
@@ -57,7 +59,7 @@ export function DatePicker({
           >
             <CalendarIcon className="mr-2 h-4 w-4" />
             {date ? (
-              format(date, includeTimePicker ? "PPP pp" : "PPP")
+              format(date, includeTimePicker ? "PPP pp" : "PPP", dateFnsOptions())
             ) : (
               <span>Pick a date</span>
             )}
@@ -238,11 +240,11 @@ export function DatePickerWithRange({
             {internalDateRange?.from ? (
               internalDateRange.to ? (
                 <>
-                  {format(internalDateRange.from, "LLL dd, yy : HH:mm")} -{" "}
-                  {format(internalDateRange.to, "LLL dd, yy : HH:mm")}
+                  {format(internalDateRange.from, "LLL dd, yy : HH:mm", dateFnsOptions())} -{" "}
+                  {format(internalDateRange.to, "LLL dd, yy : HH:mm", dateFnsOptions())}
                 </>
               ) : (
-                format(internalDateRange.from, "LLL dd, y")
+                format(internalDateRange.from, "LLL dd, y", dateFnsOptions())
               )
             ) : (
               <span>Pick a date</span>
@@ -331,6 +333,7 @@ export function TimeRangePicker({
   disabled,
   maxRangeMs,
 }: TimeRangePickerProps) {
+  const { t } = useI18n();
   // Determine the range type
   const rangeType: "named" | "custom" | null = timeRange
     ? "from" in timeRange
@@ -541,7 +544,7 @@ export function TimeRangePicker({
           <span className="bg-muted h-5 w-10 rounded px-1.5 text-center text-xs leading-5">
             {setting?.abbreviation || namedRangeValue}
           </span>
-          <span>{setting?.label || namedRangeValue}</span>
+          <span>{t(setting?.label || namedRangeValue || "")}</span>
         </div>
       );
     }
@@ -644,7 +647,7 @@ export function TimeRangePicker({
                     <span className="bg-muted h-5 w-10 rounded px-1.5 text-center text-xs leading-5">
                       {setting.abbreviation}
                     </span>
-                    <span>{setting.label}</span>
+                    <span>{t(setting.label)}</span>
                   </div>
                 );
               })}

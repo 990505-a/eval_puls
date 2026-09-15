@@ -84,6 +84,13 @@ const REWRITES: Array<[RegExp, string]> = [
   [/^No traces in the last (.+)$/, "最近 $1 没有链路"],
   // 项目卡片上的入口按钮，后面跟着项目名（名称本身不动）
   [/^Go to project (.+)$/, "进入项目 $1"],
+  // v4 迁移页：项目计数与横幅都带单复数变化，整串匹配够不着。
+  // 页脚那句原本被 JSX 拆成多个文本节点，已在 V4MigrationStatusPage 里合成一句
+  // （见该文件 "of {n} projects need action" 处的注释）。
+  [/^of (\d+) projects needs? action$/, "共 $1 个项目需要处理"],
+  [/^of (\d+) projects needs? action · (\d+) could not be checked$/, "共 $1 个项目需要处理 · $2 个无法检查"],
+  [/^(\d+) of your (\d+) projects needs? an upgrade\.$/, "你的 $2 个项目中有 $1 个需要升级。"],
+  [/^· (\d+) could not be checked$/, "· $1 个无法检查"],
 ];
 
 function applyRewrites(text: string): string | undefined {

@@ -618,8 +618,11 @@ function V4MigrationStatusPageContent() {
                   {actionNeededProjects}
                 </span>
                 <span className="text-muted-foreground text-sm">
-                  of {totalProjects} projects{" "}
-                  {actionNeededProjects === 1 ? "needs" : "need"} action
+                  {/* 汉化版：这句原本由 of / 数字 / projects / needs|need / action
+                      五个子节点拼成，而 DOM 兜底翻译层是按文本节点整段匹配的，拆开就翻不了。
+                      合成一个模板串后可见文本完全不变，但成了一个文本节点，
+                      交给 dom-translator 的 REWRITES 规则整句翻译（含单复数）。 */}
+                  {`of ${totalProjects} projects ${actionNeededProjects === 1 ? "needs" : "need"} action`}
                   {unavailableProjects > 0 &&
                     ` · ${unavailableProjects} could not be checked`}
                 </span>
